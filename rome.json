@@ -1,0 +1,29 @@
+{
+	"organizeImports": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"all": true,
+			"suspicious":{
+				"noExplicitAny":"off"
+			},
+			"nursery":{
+				"noConsoleLog":"off"
+			}
+		}
+	},
+	"formatter":{
+		"enabled": true,
+		"formatWithErrors": true
+
+	},
+	"javascript":{
+		"formatter":{
+			"quoteProperties": "asNeeded",
+			"quoteStyle": "single"
+		}
+
+	}
+}
