@@ -5,6 +5,8 @@ import { IUser } from 'models/user.models';
 export const login = async (req, res) => {
 	const { email, password } = req.body;
 
+	console.log(req.body);
+
 	const [rows]: any = await pool.query('SELECT * FROM users WHERE email = ?', [
 		email,
 	]);

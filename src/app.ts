@@ -5,8 +5,10 @@ import authRoutes from './routes/auth.routes';
 import pool from './database';
 const app = express();
 
+import cors from 'cors';
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(cors());
 app.get('/', (req, res) => {
 	res.send('welcome');
 });
