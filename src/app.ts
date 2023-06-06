@@ -13,8 +13,7 @@ app.get('/', (req, res) => {
 	res.send('welcome');
 });
 app.get('/ping', async (req, res) => {
-	const [result] = await pool.query('CREATEt');
-	res.json(result);
+	res.send('pong');
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productsRoutes);
