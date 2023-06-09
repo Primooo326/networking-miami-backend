@@ -1,33 +1,5 @@
 import pool from '../database';
 import { encrypt, compare, generateTokenSign } from '../tools';
-import { IUser } from 'models/user.models';
-
-// export const login = async (req, res) => {
-// 	const { email, password } = req.body;
-
-// 	console.log(req.body);
-
-// 	const [rows]: any = await pool.query(
-// 		'SELECT * FROM usuarios WHERE email = ?',
-// 		[email],
-// 	);
-
-// 	if (rows.length > 0) {
-// 		const user: IUser = rows[0];
-
-// 		const esSimilar = await compare(password, user.password);
-
-// 		if (esSimilar) {
-// 			const token = generateTokenSign(rows.insertId);
-
-// 			res.status(200).json({ user, token });
-// 		} else {
-// 			res.status(500).json({ error: 'Invalid password' });
-// 		}
-// 	} else {
-// 		res.status(500).json({ error: 'user do not exist' });
-// 	}
-// };
 export const login = async (req, res) => {
 	const { email, password } = req.body;
 
@@ -110,6 +82,7 @@ export const register = async (req, res) => {
 		temasInteres,
 		tipoConexion,
 		areaExperiencia,
+		avatar
 	} = req.body;
 
 	try {
@@ -135,7 +108,7 @@ export const register = async (req, res) => {
 					phone,
 					biography,
 					objetivo,
-					null,
+					avatar,
 				],
 			);
 			languages.forEach(async (language) => {
