@@ -1,73 +1,83 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import config from './config';
-import nodemailer from "nodemailer"
-import fs from "fs"
-import { TypeMail } from 'models/sys.models';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import config from "./config";
+import nodemailer from "nodemailer";
+import fs from "fs";
 
 export async function encrypt(data: string) {
-	const salt = await bcrypt.genSalt(11);
-	return await bcrypt.hash(data, salt);
+  const salt = await bcrypt.genSalt(11);
+  return await bcrypt.hash(data, salt);
 }
 export async function compare(data: string, data2: string) {
-	return await bcrypt.compare(data, data2);
+  return await bcrypt.compare(data, data2);
 }
-export function generateTokenSign(id_user: string) {
-	const token = jwt.sign({ id: id_user }, config.SECRETKEY, {
-		expiresIn: 86400, // 24 hours
-	});
-	console.log(token);
-	return token;
+export function generateTokenSign(data: any, expiration: number | string) {
+  const token = jwt.sign(data, config.SECRETKEY, {
+    // expiresIn: 86400, // 24 hours
+    expiresIn: expiration,
+  });
+  return token;
 }
-export async function sendEmail(userEmail:string, type:TypeMail){
 
+export function validToken(token: string) {
+  return jwt.verify(token, config.SECRETKEY);
+}
 
-	const data = {
-		subject: "Verificacion de correo",
-		htmlContent :fs.readFileSync("mailverification.html", "utf8")
-	}
+export async function sendEmail(
+  userEmail: string,
+  typeEmail: string,
+  data: any
+) {
+  try {
+    const mailBuildData = {
+      subject: "Verificacion de correo",
+      htmlContent: fs.readFileSync("mailverification.html", "utf8"),
+    };
+    if (typeEmail === "verification") {
+      mailBuildData.subject = "Verificacion de correo";
+      mailBuildData.htmlContent = fs
+        .readFileSync("mailverification.html", "utf8")
+        .replace("{TOKEN}", data);
+    } else if (typeEmail === "changeEmail") {
+      mailBuildData.subject = "Cambio de correo";
+      mailBuildData.htmlContent = fs
+        .readFileSync("mailchange.html", "utf8")
+        .replace("{TOKEN}", data);
+    } else if (typeEmail === "invitation") {
+      mailBuildData.subject = "Invitacion";
+      mailBuildData.htmlContent = fs
+        .readFileSync("mailinvitation.html", "utf8")
+        .replace("{USER}", data);
+    } else if (typeEmail === "passwordReset") {
+      mailBuildData.subject = "Recuperacion de contraseña";
+      mailBuildData.htmlContent = fs
+        .readFileSync("mailpasswordreset.html", "utf8")
+        .replace("{USER}", data);
+    } else {
+      throw new Error("Email type not found");
+    }
 
-
-	if(type === TypeMail.verification){
-		data.subject = "Verificacion de correo"
-		data.htmlContent = fs.readFileSync("mailverification.html", "utf8")
-	}else if(type === TypeMail.changeEmail){
-		data.subject = "Cambio de correo"
-		data.htmlContent = fs.readFileSync("mailchange.html", "utf8")
-	}else if(type === TypeMail.invitation){
-		data.subject = "Invitacion"
-		data.htmlContent = fs.readFileSync("mailinvitation.html", "utf8")
-
-	}else if( type === TypeMail.passwordReset ){
-		data.subject = "Recuperacion de contraseña"
-		data.htmlContent = fs.readFileSync("mailpasswordreset.html", "utf8")
-	}else{
-		 throw new Error("type mail not found");
-		
-	}
-
-	
     const transporter = nodemailer.createTransport({
-        host: "mail.networking.miami",
-        port: 465,
-        secure: true,
-        auth: {
-            user: "_mainaccount@networking.miami",
-            pass: "Miami2023$",
-        },
+      host: "mail.networking.miami",
+      port: 465,
+      secure: true,
+      auth: {
+        user: "_mainaccount@networking.miami",
+        pass: "Miami2023$",
+      },
     });
-
 
     const info = await transporter.sendMail({
-        from: '"Networking miami" <_mainaccount@networking.miami>',
-        to: userEmail,
-		subject: data.subject,
-		html: data.htmlContent
+      from: '"Networking miami" <_mainaccount@networking.miami>',
+      to: userEmail,
+      subject: mailBuildData.subject,
+      html: mailBuildData.htmlContent,
     });
-
 
     console.log("Message sent: %s", info.messageId);
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-
-	
+    return info.messageId;
+  } catch (error) {
+    console.log(error);
+  }
 }
