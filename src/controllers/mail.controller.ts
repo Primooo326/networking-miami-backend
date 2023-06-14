@@ -1,5 +1,6 @@
-import { sendEmail, generateTokenSign, validToken, encrypt } from "../tools";
+import { sendEmail, generateTokenSign, validToken } from "../tools";
 import pool from "../database";
+import fs from "fs";
 
 export const sendMailVerification = async (req, res) => {
   try {
@@ -14,7 +15,27 @@ export const sendMailVerification = async (req, res) => {
     } else {
       const token = generateTokenSign({ email }, 86400);
       const mail = await sendEmail(email, "verification", token);
+      const myPromise = new Promise((resolve, reject) => {
+        // Simulamos una operación asincrónica que tarda 2 segundos en completarse
+        setTimeout(() => {
+          const success = true;
 
+          if (success) {
+            // La operación se completó correctamente
+            resolve("Operación exitosa");
+          } else {
+            // La operación falló
+            reject("Error en la operación");
+          }
+        }, 5000);
+      });
+      await myPromise
+        .then((result) => {
+          console.log("Promesa resuelta:", result);
+        })
+        .catch((error) => {
+          console.error("Promesa rechazada:", error);
+        });
       res.json({ email, token, mail });
     }
   } catch (error) {
@@ -72,6 +93,7 @@ export const sendMailChangeMail = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
 export const verifyTokenChangeEmail = async (req, res) => {
   try {
     const { token } = req.body;
@@ -89,12 +111,13 @@ export const verifyTokenChangeEmail = async (req, res) => {
       res.status(500).send(result);
     }
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send(fs.readFileSync("tokenInvalid.html", "utf8"));
   }
 };
+
 export const verifyTokenVerificationEmail = async (req, res) => {
   try {
-    const { token } = req.body;
+    const token = req.params.token;
     const tokenResponse: any = validToken(token);
     const { email } = tokenResponse;
 
@@ -103,11 +126,12 @@ export const verifyTokenVerificationEmail = async (req, res) => {
       [true, email]
     );
     if (result.affectedRows > 0) {
-      res.json(result);
+      // res.json(result);
+      res.send(fs.readFileSync("mailverifyed.html", "utf8"));
     } else {
       res.status(500).send(result);
     }
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send(fs.readFileSync("tokenInvalid.html", "utf8"));
   }
 };
