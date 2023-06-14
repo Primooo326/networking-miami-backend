@@ -1,5 +1,6 @@
 import express from "express";
 import morgan from "morgan";
+import bodyParser from "body-parser";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/users.routes";
 import mailRoutes from "./routes/mail.routes";
@@ -11,8 +12,10 @@ import cors from "cors";
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.get("/", (req, res) => {
-  res.send(fs.readFileSync("tokenInvalid.html", "utf8"));
+  res.send(fs.readFileSync("resetPasswordSuccess.html", "utf8"));
 });
 app.get("/ping", async (req, res) => {
   const routes: any[] = [];

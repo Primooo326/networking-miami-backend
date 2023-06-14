@@ -13,7 +13,6 @@ export async function compare(data: string, data2: string) {
 }
 export function generateTokenSign(data: any, expiration: number | string) {
   const token = jwt.sign(data, config.SECRETKEY, {
-    // expiresIn: 86400, // 24 hours
     expiresIn: expiration,
   });
   return token;
@@ -52,7 +51,7 @@ export async function sendEmail(
       mailBuildData.subject = "Recuperacion de contraseña";
       mailBuildData.htmlContent = fs
         .readFileSync("mailpasswordreset.html", "utf8")
-        .replace("{USER}", data);
+        .replace("{TOKEN}", data);
     } else {
       throw new Error("Email type not found");
     }

@@ -1,11 +1,17 @@
 import { Router } from "express";
 import * as emailControllers from "../controllers/mail.controller";
+import { verifyToken } from "../middlewares/authJwt";
 const router = Router();
 
 router.post("/changemail", emailControllers.sendMailChangeMail);
 router.post("/invitation", emailControllers.sendMailInvitation);
 router.post("/resetpassword", emailControllers.sendMailResetPassword);
-router.post("/verificationmail", emailControllers.sendMailVerification);
+router.get("/resetPasswwordForm/:token", emailControllers.resetPasswwordForm);
+router.post(
+  "/verificationmail",
+  verifyToken,
+  emailControllers.sendMailVerification
+);
 
 router.get(
   "/verifytokenchangemail/:token",

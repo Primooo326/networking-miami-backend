@@ -1,5 +1,9 @@
 import pool from "../database";
 import { encrypt, compare, generateTokenSign } from "../tools";
+import config from "../config";
+import jwt from "jsonwebtoken";
+import fs from "fs";
+
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -162,8 +166,10 @@ export const register = async (req, res) => {
 };
 export const resetPassword = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { token, password } = req.body;
+    const { email }: any = jwt.verify(token, config.SECRETKEY);
     console.log(email, password);
+
     const passwordEncrypted = await encrypt(password);
 
     const [result]: any = await pool.query(
@@ -171,7 +177,7 @@ export const resetPassword = async (req, res) => {
       [passwordEncrypted, email]
     );
     if (result.affectedRows > 0) {
-      res.json(result);
+      res.send(fs.readFileSync("resetPasswordSuccess.html", "utf8"));
     } else {
       res.status(500).send(result);
     }

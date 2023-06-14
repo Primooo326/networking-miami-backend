@@ -1,6 +1,8 @@
 import { sendEmail, generateTokenSign, validToken } from "../tools";
 import pool from "../database";
 import fs from "fs";
+import config from "../config";
+import jwt from "jsonwebtoken";
 
 export const sendMailVerification = async (req, res) => {
   try {
@@ -42,6 +44,7 @@ export const sendMailVerification = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
 export const sendMailInvitation = async (req, res) => {
   try {
     const { user, email } = req.body;
@@ -130,6 +133,23 @@ export const verifyTokenVerificationEmail = async (req, res) => {
       res.send(fs.readFileSync("mailverifyed.html", "utf8"));
     } else {
       res.status(500).send(result);
+    }
+  } catch (error) {
+    res.status(500).send(fs.readFileSync("tokenInvalid.html", "utf8"));
+  }
+};
+export const resetPasswwordForm = async (req, res) => {
+  const token = req.params.token;
+  try {
+    if (token) {
+      const decoded: any = jwt.verify(token, config.SECRETKEY);
+      console.log(decoded);
+
+      res.send(
+        fs.readFileSync("resetPassword.html", "utf8").replace("{TOKEN}", token)
+      );
+    } else {
+      return res.status(403).json({ message: "no token available" });
     }
   } catch (error) {
     res.status(500).send(fs.readFileSync("tokenInvalid.html", "utf8"));
