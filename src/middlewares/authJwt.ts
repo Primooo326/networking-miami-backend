@@ -20,7 +20,7 @@ export const verifyToken = async (req, res, next) => {
         next();
       }
     } else {
-      return res.status(403).json({ message: "no token available" });
+      return res.status(403).send("no token available");
     }
   } catch (error) {
     res.status(500).send(error);
