@@ -1,0 +1,136 @@
+-- Tabla Usuario
+CREATE TABLE Usuario (
+  id VARCHAR(255) PRIMARY KEY,
+  nombre VARCHAR(255),
+  email VARCHAR(255),
+  fechaNacimiento DATE,
+  verificado TINYINT(1),
+  condado VARCHAR(255),
+  ciudad VARCHAR(255),
+  genero VARCHAR(255),
+  telefono VARCHAR(255),
+  biografia TEXT,
+  avatar VARCHAR(255),
+  fotoPortada VARCHAR(255),
+  objetivo TEXT,
+  fechaIngreso DATE
+);
+
+-- Tabla UsuarioTemasInteres
+CREATE TABLE UsuarioTemasInteres (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  usuario_id VARCHAR(255),
+  interes VARCHAR(255),
+  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+);
+
+-- Tabla UsuarioAreaExperiencia
+CREATE TABLE UsuarioAreaExperiencia (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  usuario_id VARCHAR(255),
+  experiencia VARCHAR(255),
+  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+);
+
+-- Tabla UsuarioTipoConexion
+CREATE TABLE UsuarioTipoConexion (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  usuario_id VARCHAR(255),
+  conexion VARCHAR(255),
+  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+);
+
+-- Tabla UsuarioLenguajes
+CREATE TABLE UsuarioLenguajes (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  usuario_id VARCHAR(255),
+  lenguaje VARCHAR(255),
+  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+);
+
+-- Tabla UsuarioOcupaciones
+CREATE TABLE UsuarioOcupaciones (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  usuario_id VARCHAR(255),
+  ocupacion VARCHAR(255),
+  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+);
+
+-- Tabla UsuarioRedesSociales
+CREATE TABLE UsuarioRedesSociales (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  usuario_id VARCHAR(255),
+  red VARCHAR(255),
+  link VARCHAR(255),
+  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+);
+
+-- Tabla UsuarioPublicaciones
+CREATE TABLE UsuarioPublicaciones (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  usuario_id VARCHAR(255),
+  urlFotos TEXT,
+  tipo VARCHAR(255),
+  descripcion TEXT,
+  comentarios TEXT,
+  reacciones TEXT,
+  compartidos TEXT,
+  precio DECIMAL(10, 2),
+  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+);
+
+-- Tabla PublicacionCompartidos
+CREATE TABLE PublicacionCompartidos (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  publicacion_id INT,
+  usuario_id VARCHAR(255),
+  FOREIGN KEY (publicacion_id) REFERENCES UsuarioPublicaciones(id),
+  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+);
+
+-- Tabla PublicacionReacciones
+CREATE TABLE PublicacionReacciones (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  publicacion_id INT,
+  usuario_id VARCHAR(255),
+  reaccion VARCHAR(255),
+  FOREIGN KEY (publicacion_id) REFERENCES UsuarioPublicaciones(id),
+  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+);
+
+-- Tabla PublicacionComentarios
+CREATE TABLE PublicacionComentarios (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  publicacion_id INT,
+  usuario_id VARCHAR(255),
+  comentario TEXT,
+  fecha DATE,
+  FOREIGN KEY (publicacion_id) REFERENCES UsuarioPublicaciones(id),
+  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+);
+
+-- Tabla Contacto
+CREATE TABLE Contacto (
+  id VARCHAR(255) PRIMARY KEY,
+  nombre VARCHAR(255),
+  email VARCHAR(255),
+  avatar VARCHAR(255),
+  fotoPortada VARCHAR(255)
+);
+
+-- Tabla Chat
+CREATE TABLE Chat (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  sala VARCHAR(255),
+  contacto_id VARCHAR(255),
+  FOREIGN KEY (contacto_id) REFERENCES Contacto(id)
+);
+
+-- Tabla Mensajes
+CREATE TABLE Mensajes (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  chat_id INT,
+  fecha DATE,
+  mensaje TEXT,
+  FOREIGN KEY (chat_id) REFERENCES Chat(id)
+);

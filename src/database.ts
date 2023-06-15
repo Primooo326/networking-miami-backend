@@ -1,9 +1,9 @@
-import { createPool } from 'mysql2/promise';
+import { createPool } from "mysql2/promise";
 
 let pool = createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '',
+  host: "localhost",
+  user: "root",
+  password: "",
   port: 3306,
 });
 
@@ -11,8 +11,8 @@ async function initializeDatabase() {
   try {
     const connection = await pool.getConnection();
 
-    await connection.query('CREATE DATABASE IF NOT EXISTS networking');
-    await connection.query('USE networking');
+    await connection.query("CREATE DATABASE IF NOT EXISTS networking");
+    await connection.query("USE networking");
 
     await connection.query(`
       CREATE TABLE IF NOT EXISTS usuarios (
@@ -66,17 +66,17 @@ async function initializeDatabase() {
     connection.release();
     console.log('Database "networking" and tables created successfully.');
   } catch (error) {
-    console.error('Error initializing database:', error);
+    console.error("Error initializing database:", error);
   }
 }
 
 initializeDatabase();
 pool = createPool({
-	host: 'localhost',
-	user: 'root',
-	password: '',
-	port: 3306,
-	database: 'networking',
-  });
+  host: "localhost",
+  user: "root",
+  password: "",
+  port: 3306,
+  database: "networking2",
+});
 
-export default pool
+export default pool;
