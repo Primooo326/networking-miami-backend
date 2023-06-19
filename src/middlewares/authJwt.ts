@@ -10,7 +10,7 @@ export const verifyToken = async (req, res, next) => {
       const decoded: any = jwt.verify(token, config.SECRETKEY);
       console.log(decoded);
       const [results]: any = await pool.query(
-        "SELECT * FROM usuarios WHERE id = ?",
+        "SELECT * FROM usuario WHERE id = ?",
         [decoded.id]
       );
 

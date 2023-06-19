@@ -76,7 +76,7 @@ pool = createPool({
   user: "root",
   password: "",
   port: 3306,
-  database: "networking2",
+  database: "networking3",
 });
 
 export default pool;

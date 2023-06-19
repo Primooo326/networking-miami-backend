@@ -8,7 +8,7 @@ export const sendMailVerification = async (req, res) => {
   try {
     const { email } = req.body;
     const [results]: any = await pool.query(
-      "SELECT * FROM usuarios WHERE email = ?",
+      "SELECT * FROM usuario WHERE email = ?",
       [email]
     );
 
@@ -59,7 +59,7 @@ export const sendMailResetPassword = async (req, res) => {
   try {
     const { email } = req.body;
     const [results]: any = await pool.query(
-      "SELECT * FROM usuarios WHERE email = ?",
+      "SELECT * FROM usuario WHERE email = ?",
       [email]
     );
 
@@ -80,7 +80,7 @@ export const sendMailChangeMail = async (req, res) => {
   try {
     const { email, newEmail } = req.body;
     const [results]: any = await pool.query(
-      "SELECT * FROM usuarios WHERE email = ?",
+      "SELECT * FROM usuario WHERE email = ?",
       [email]
     );
 
@@ -88,6 +88,7 @@ export const sendMailChangeMail = async (req, res) => {
       res.status(404).send("Email does not exist");
     } else {
       const token = generateTokenSign({ email, newEmail }, 86400);
+      console.log(newEmail);
       const mail = await sendEmail(newEmail, "changeEmail", token);
 
       res.json({ email, token, mail });
@@ -99,21 +100,23 @@ export const sendMailChangeMail = async (req, res) => {
 
 export const verifyTokenChangeEmail = async (req, res) => {
   try {
-    const { token } = req.body;
+    const { token } = req.params;
+    console.log(`token: ${token}`);
     const tokenResponse: any = validToken(token);
     const { email, newEmail } = tokenResponse;
     console.log(email, newEmail);
 
     const [result]: any = await pool.query(
-      "UPDATE usuarios SET email = ? WHERE email = ?",
+      "UPDATE usuario SET email = ? WHERE email = ?",
       [newEmail, email]
     );
     if (result.affectedRows > 0) {
-      res.json(result);
+      res.send(fs.readFileSync("mailchangesuccess.html", "utf8"));
     } else {
       res.status(500).send(result);
     }
   } catch (error) {
+    console.log(error);
     res.status(500).send(fs.readFileSync("tokenInvalid.html", "utf8"));
   }
 };
@@ -125,7 +128,7 @@ export const verifyTokenVerificationEmail = async (req, res) => {
     const { email } = tokenResponse;
 
     const [result]: any = await pool.query(
-      "UPDATE usuarios SET isMailVerified = ? WHERE email = ?",
+      "UPDATE usuario SET verificado = ? WHERE email = ?",
       [true, email]
     );
     if (result.affectedRows > 0) {

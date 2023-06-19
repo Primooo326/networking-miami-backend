@@ -11,7 +11,7 @@ export const login = async (req, res) => {
 
   try {
     const [rows]: any = await pool.query(
-      "SELECT * FROM usuarios WHERE email = ?",
+      "SELECT * FROM usuario WHERE email = ?",
       [email]
     );
 
@@ -24,38 +24,36 @@ export const login = async (req, res) => {
         const token = generateTokenSign({ id: user.id }, 86400);
 
         const [userData]: any = await pool.query(
-          "SELECT * FROM usuarios WHERE id = ?",
+          "SELECT * FROM usuario WHERE id = ?",
           [user.id]
         );
 
-        const [languagesData]: any = await pool.query(
-          "SELECT language FROM usuarios_languages WHERE usuario_id = ?",
+        const [lenguajesData]: any = await pool.query(
+          "SELECT lenguaje FROM UsuarioLenguajes WHERE usuario_id = ?",
           [user.id]
         );
 
         const [areaExperienciaData]: any = await pool.query(
-          "SELECT area_experiencia FROM usuarios_area_experiencia WHERE usuario_id = ?",
+          "SELECT experiencia FROM UsuarioAreaExperiencia WHERE usuario_id = ?",
           [user.id]
         );
 
         const [temasInteresData]: any = await pool.query(
-          "SELECT tema_interes FROM usuarios_temas_interes WHERE usuario_id = ?",
+          "SELECT interes FROM UsuarioTemasInteres WHERE usuario_id = ?",
           [user.id]
         );
 
         const [tipoConexionData]: any = await pool.query(
-          "SELECT tipo_conexion FROM usuarios_tipo_conexion WHERE usuario_id = ?",
+          "SELECT conexion FROM UsuarioTipoConexion WHERE usuario_id = ?",
           [user.id]
         );
 
         const userDataWithRelations = {
           ...userData[0],
-          languages: languagesData.map((row) => row.language),
-          areaExperiencia: areaExperienciaData.map(
-            (row) => row.area_experiencia
-          ),
-          temasInteres: temasInteresData.map((row) => row.tema_interes),
-          tipoConexion: tipoConexionData.map((row) => row.tipo_conexion),
+          lenguajes: lenguajesData.map((row) => row.lenguaje),
+          areaExperiencia: areaExperienciaData.map((row) => row.experiencia),
+          temasInteres: temasInteresData.map((row) => row.interes),
+          tipoConexion: tipoConexionData.map((row) => row.conexion),
         };
 
         res.status(200).json({ user: userDataWithRelations, token });
@@ -73,27 +71,31 @@ export const login = async (req, res) => {
 
 export const register = async (req, res) => {
   const {
+    nombre,
     email,
-    name,
     password,
-    birthdate,
-    city,
-    gender,
-    phone,
-    biography,
-    objetivo,
-    languages,
-    temasInteres,
-    tipoConexion,
-    areaExperiencia,
+    fechaNacimiento,
+    verificado,
+    condado,
+    ciudad,
+    genero,
+    telefono,
+    biografia,
     avatar,
+    fotoPortada,
+    objetivo,
+    fechaIngreso,
+    temasInteres,
+    areaExperiencia,
+    tipoConexion,
+    lenguajes,
   } = req.body;
-
   try {
     const [results]: any = await pool.query(
-      "SELECT * FROM usuarios WHERE email = ?",
+      "SELECT * FROM usuario WHERE email = ?",
       [email]
     );
+    console.log(fechaIngreso);
 
     if (results.length > 0) {
       res.status(500).send("User already registered");
@@ -101,42 +103,46 @@ export const register = async (req, res) => {
       const passwordEncrypted = await encrypt(password);
 
       const [rows]: any = await pool.query(
-        "INSERT INTO usuarios (email,name,password,birthdate,city,gender,phone,biography,objetivo,avatar) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO usuario (nombre,email,password,fechaNacimiento,verificado,condado,ciudad,genero,telefono,biografia,avatar,fotoPortada,objetivo,fechaIngreso) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         [
+          nombre,
           email,
-          name,
           passwordEncrypted,
-          birthdate,
-          city,
-          gender,
-          phone,
-          biography,
-          objetivo,
+          fechaNacimiento,
+          false,
+          condado,
+          ciudad,
+          genero,
+          telefono,
+          biografia,
           avatar,
+          "https://img.freepik.com/free-photo/glitch-effect-black-background_53876-129025.jpg?w=740&t=st=1686934648~exp=1686935248~hmac=1ce13f8749d5e2fddc16cfa874fa7ac7b6ac58c88576f7e70527eb6bf08249c3",
+          objetivo,
+          fechaIngreso,
         ]
       );
-      languages.forEach(async (language) => {
+      lenguajes.forEach(async (lenguaje) => {
         await pool.query(
-          "INSERT INTO usuarios_languages (usuario_id,language) VALUES (?, ?)",
-          [rows.insertId, language]
+          "INSERT INTO UsuarioLenguajes (usuario_id,lenguaje) VALUES (?, ?)",
+          [rows.insertId, lenguaje]
         );
       });
-      temasInteres.forEach(async (temasIntere) => {
+      temasInteres.forEach(async (interes) => {
         await pool.query(
-          "INSERT INTO usuarios_temas_interes (usuario_id,tema_interes) VALUES (?, ?)",
-          [rows.insertId, temasIntere]
+          "INSERT INTO UsuarioTemasInteres (usuario_id,interes) VALUES (?, ?)",
+          [rows.insertId, interes]
         );
       });
-      tipoConexion.forEach(async (tipo) => {
+      tipoConexion.forEach(async (conexion) => {
         await pool.query(
-          "INSERT INTO usuarios_tipo_conexion (usuario_id,tipo_conexion) VALUES (?, ?)",
-          [rows.insertId, tipo]
+          "INSERT INTO UsuarioTipoConexion (usuario_id,conexion) VALUES (?, ?)",
+          [rows.insertId, conexion]
         );
       });
-      areaExperiencia.forEach(async (area) => {
+      areaExperiencia.forEach(async (experiencia) => {
         await pool.query(
-          "INSERT INTO usuarios_area_experiencia (usuario_id,area_experiencia) VALUES (?, ?)",
-          [rows.insertId, area]
+          "INSERT INTO UsuarioAreaExperiencia (usuario_id,experiencia) VALUES (?, ?)",
+          [rows.insertId, experiencia]
         );
       });
 
@@ -144,19 +150,21 @@ export const register = async (req, res) => {
 
       res.status(200).json({
         token,
+        id: rows.insertId,
+        nombre,
         email,
-        name,
-        password,
-        birthdate,
-        city,
-        gender,
-        phone,
-        biography,
+        passwordEncrypted,
+        fechaNacimiento,
+        verificado,
+        condado,
+        ciudad,
+        genero,
+        telefono,
+        biografia,
+        avatar,
+        fotoPortada,
         objetivo,
-        languages,
-        temasInteres,
-        tipoConexion,
-        areaExperiencia,
+        fechaIngreso,
       });
     }
   } catch (error) {
@@ -173,15 +181,15 @@ export const resetPassword = async (req, res) => {
     const passwordEncrypted = await encrypt(password);
 
     const [result]: any = await pool.query(
-      "UPDATE usuarios SET password = ? WHERE email = ?",
+      "UPDATE usuario SET password = ? WHERE email = ?",
       [passwordEncrypted, email]
     );
     if (result.affectedRows > 0) {
       res.send(fs.readFileSync("resetPasswordSuccess.html", "utf8"));
     } else {
-      res.status(500).send(result);
+      res.send(fs.readFileSync("resetPasswordSuccess.html", "utf8"));
     }
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send(fs.readFileSync("tokenInvalid.html", "utf8"));
   }
 };

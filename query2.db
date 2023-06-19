@@ -1,10 +1,11 @@
 -- Tabla Usuario
 CREATE TABLE Usuario (
-  id VARCHAR(255) PRIMARY KEY,
+  id INT PRIMARY KEY AUTO_INCREMENT,
   nombre VARCHAR(255),
   email VARCHAR(255),
+  password VARCHAR(255),
   fechaNacimiento DATE,
-  verificado TINYINT(1),
+  verificado BOOLEAN DEFAULT FALSE,
   condado VARCHAR(255),
   ciudad VARCHAR(255),
   genero VARCHAR(255),
@@ -18,48 +19,42 @@ CREATE TABLE Usuario (
 
 -- Tabla UsuarioTemasInteres
 CREATE TABLE UsuarioTemasInteres (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  usuario_id VARCHAR(255),
+  usuario_id INT,
   interes VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
 );
 
 -- Tabla UsuarioAreaExperiencia
 CREATE TABLE UsuarioAreaExperiencia (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  usuario_id VARCHAR(255),
+  usuario_id INT,
   experiencia VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
 );
 
 -- Tabla UsuarioTipoConexion
 CREATE TABLE UsuarioTipoConexion (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  usuario_id VARCHAR(255),
+  usuario_id INT,
   conexion VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
 );
 
 -- Tabla UsuarioLenguajes
 CREATE TABLE UsuarioLenguajes (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  usuario_id VARCHAR(255),
+  usuario_id INT,
   lenguaje VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
 );
 
 -- Tabla UsuarioOcupaciones
 CREATE TABLE UsuarioOcupaciones (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  usuario_id VARCHAR(255),
+  usuario_id INT,
   ocupacion VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
 );
 
 -- Tabla UsuarioRedesSociales
 CREATE TABLE UsuarioRedesSociales (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  usuario_id VARCHAR(255),
+  usuario_id INT,
   red VARCHAR(255),
   link VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
@@ -68,7 +63,7 @@ CREATE TABLE UsuarioRedesSociales (
 -- Tabla UsuarioPublicaciones
 CREATE TABLE UsuarioPublicaciones (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  usuario_id VARCHAR(255),
+  usuario_id INT,
   urlFotos TEXT,
   tipo VARCHAR(255),
   descripcion TEXT,
@@ -83,7 +78,7 @@ CREATE TABLE UsuarioPublicaciones (
 CREATE TABLE PublicacionCompartidos (
   id INT PRIMARY KEY AUTO_INCREMENT,
   publicacion_id INT,
-  usuario_id VARCHAR(255),
+  usuario_id INT,
   FOREIGN KEY (publicacion_id) REFERENCES UsuarioPublicaciones(id),
   FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
 );
@@ -92,7 +87,7 @@ CREATE TABLE PublicacionCompartidos (
 CREATE TABLE PublicacionReacciones (
   id INT PRIMARY KEY AUTO_INCREMENT,
   publicacion_id INT,
-  usuario_id VARCHAR(255),
+  usuario_id INT,
   reaccion VARCHAR(255),
   FOREIGN KEY (publicacion_id) REFERENCES UsuarioPublicaciones(id),
   FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
@@ -102,7 +97,7 @@ CREATE TABLE PublicacionReacciones (
 CREATE TABLE PublicacionComentarios (
   id INT PRIMARY KEY AUTO_INCREMENT,
   publicacion_id INT,
-  usuario_id VARCHAR(255),
+  usuario_id INT,
   comentario TEXT,
   fecha DATE,
   FOREIGN KEY (publicacion_id) REFERENCES UsuarioPublicaciones(id),
