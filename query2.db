@@ -4,7 +4,7 @@ CREATE TABLE Usuario (
   nombre VARCHAR(255),
   email VARCHAR(255),
   password VARCHAR(255),
-  fechaNacimiento DATE,
+  fechaNacimiento VARCHAR(255),
   verificado BOOLEAN DEFAULT FALSE,
   condado VARCHAR(255),
   ciudad VARCHAR(255),
@@ -14,7 +14,7 @@ CREATE TABLE Usuario (
   avatar VARCHAR(255),
   fotoPortada VARCHAR(255),
   objetivo TEXT,
-  fechaIngreso DATE
+  fechaIngreso VARCHAR(255)
 );
 
 -- Tabla UsuarioTemasInteres
@@ -99,7 +99,7 @@ CREATE TABLE PublicacionComentarios (
   publicacion_id INT,
   usuario_id INT,
   comentario TEXT,
-  fecha DATE,
+  fecha VARCHAR(255),
   FOREIGN KEY (publicacion_id) REFERENCES UsuarioPublicaciones(id),
   FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
 );
@@ -125,7 +125,7 @@ CREATE TABLE Chat (
 CREATE TABLE Mensajes (
   id INT PRIMARY KEY AUTO_INCREMENT,
   chat_id INT,
-  fecha DATE,
+  fecha VARCHAR(255),
   mensaje TEXT,
   FOREIGN KEY (chat_id) REFERENCES Chat(id)
 );

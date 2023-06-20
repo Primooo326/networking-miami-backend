@@ -100,7 +100,7 @@ export const register = async (req, res) => {
     if (results.length > 0) {
       res.status(500).send("User already registered");
     } else {
-      const passwordEncrypted = await encrypt(password);
+      const passwordEncrypted = await encrypt(`${password}`);
 
       const [rows]: any = await pool.query(
         "INSERT INTO usuario (nombre,email,password,fechaNacimiento,verificado,condado,ciudad,genero,telefono,biografia,avatar,fotoPortada,objetivo,fechaIngreso) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
