@@ -1,9 +1,23 @@
 import pool from '../database';
-import { encrypt, compare, generateTokenSign } from '../tools';
-
+import jwt from 'jsonwebtoken';
+import config from '../config';
 export const readUsers = async (req, res) => {
-	const [rows]: any = await pool.query('SELECT * FROM usuario');
-	res.json(rows);
+	const token = req.headers['x-access-token'];
+	try {
+		const decoded: any = jwt.verify(token, config.SECRETKEY);
+		const [results]: any = await pool.query(
+			'SELECT * FROM contacto WHERE usuario_id = ?',
+			[decoded.id],
+		);
+		const ids = results.map((c) => c.contacto_id);
+		ids.push(decoded.id);
+		const [rows]: any = await pool.query(
+			`SELECT * FROM usuario WHERE id NOT IN (${ids}) LIMIT 50`,
+		);
+		res.json(rows);
+	} catch (error) {
+		res.status(500).send('registered failed');
+	}
 };
 
 export const readUserById = async (req, res) => {
