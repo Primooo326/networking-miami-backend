@@ -27,6 +27,39 @@ export const readUserById = async (req, res) => {
 	res.json(rows);
 };
 
+export const searchUser = async (req, res) => {
+	let {batchsize,currentbatch,query} = req.query;
+	const token = req.headers['x-access-token'];
+
+
+try {
+	const decoded: any = jwt.verify(token, config.SECRETKEY);
+
+	const [results]: any = await pool.query(
+		'SELECT * FROM contacto WHERE usuario_id = ?',
+		[decoded.id],
+	);
+	const ids = results.map((c) => c.contacto_id);
+	ids.push(decoded.id);
+	
+	batchsize === undefined ? batchsize = 50 : batchsize = batchsize;
+	currentbatch === undefined ? currentbatch = 0 : currentbatch = currentbatch;
+	console.log(batchsize,currentbatch,query);
+	if(query === undefined){
+		res.status(500).send('No query');
+	}else {
+		console.log(ids.toString());
+		const [rows] = await pool.query("SELECT * FROM usuario WHERE (LOWER(nombre) LIKE ? OR LOWER(email) LIKE ?) AND id NOT IN (?) LIMIT ? OFFSET ?",[`%${query}%`,`%${query}%`,ids, Number(batchsize), currentbatch * batchsize]);
+		res.send(rows)
+	}
+} catch (error) {
+	res.status(500).send(error);
+}
+
+
+
+}
+
 export const createUser = async (req, res) => {
 	res.json('Create user');
 };
@@ -132,6 +165,6 @@ export const updateUserById = async (req, res) => {
 	}
 };
 
-export const deleteUserBtId = async (req, res) => {
+export const deleteUserById = async (req, res) => {
 	res.json('Delete user by id');
 };

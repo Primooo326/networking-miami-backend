@@ -27,18 +27,24 @@ export const createMatch = async (req, res) => {
 };
 export const readMatch = async (req, res) => {
 	const { id } = req.params;
+	console.log(id);
 	try {
 		const [results]: any = await pool.query(
 			'SELECT * FROM contacto WHERE usuario_id = ?',
 			[id],
 		);
-		const ids = results.map((c) => ` id = ${c.contacto_id} `).join(' OR');
-		const [result]: any = await pool.query(
-			`SELECT * FROM usuario WHERE ${ids}`,
-		);
-		res.status(200).json({
-			result,
-		});
+		console.log(results);
+		if(results.length === 0) {return res.status(200).json({result: []})}
+		else {
+
+			const ids = results.map((c) => ` id = ${c.contacto_id} `).join(' OR');
+			const [result]: any = await pool.query(
+				`SELECT * FROM usuario WHERE ${ids}`,
+			);
+			res.status(200).json({
+				result,
+			});
+		}
 	} catch (error) {
 		console.error('Error during registered:', error);
 		res.status(500).send('registered failed');
