@@ -12,7 +12,7 @@ export interface IUser {
 	avatar: string;
 }
 
-export interface Usuario {
+export interface usuario {
   id: string;
   nombre: string;
   email: string;
@@ -32,50 +32,50 @@ export interface Usuario {
   tipoConeccion: { id: string; coneccion: string }[];
   lenguajes: { id: string; lenguaje: string }[];
   ocupaciones: { id: string; ocupacion: string }[];
-  redesSociales: UsuarioRedesSociales[];
-  publicaciones: UsuarioPublicaciones[];
-  contactos: Contacto[];
-  chats: Chat[];
+  redesSociales: usuarioredessociales[];
+  publicaciones: usuariopublicaciones[];
+  contactos: contacto[];
+  chats: chat[];
 }
 
-export interface Chat {
+export interface chat {
   sala: string;
-  contacto: Contacto;
-  mensajes: Mensajes[];
+  contacto: contacto;
+  mensajes: mensajes[];
 }
-export interface Mensajes {
+export interface mensajes {
   fecha: string;
   mensaje: String;
 }
-export interface UsuarioPublicaciones {
+export interface usuariopublicaciones {
   urlFotos: string[];
   tipo: string;
   descripcion: string;
-  comentarios: PublicacionComentarios[];
-  reacciones: PublicacionReacciones[];
-  compartidos: PublicacionCompartidos[];
+  comentarios: publicacioncomentarios[];
+  reacciones: publicacionreacciones[];
+  compartidos: publicacioncompartidos	[];
   precio: number | null;
 }
-export interface PublicacionCompartidos {
-  usuario: Contacto;
+export interface publicacioncompartidos	 {
+  usuario: contacto;
 }
-export interface PublicacionReacciones {
-  usuario: Contacto;
+export interface publicacionreacciones {
+  usuario: contacto;
   reaccion: string;
 }
-export interface PublicacionComentarios {
-  usuario: Contacto;
+export interface publicacioncomentarios {
+  usuario: contacto;
   comentario: string;
   fecha: string;
 }
-export interface Contacto {
+export interface contacto {
   id: string;
   nombre: string;
   email: string;
   avatar: string;
   fotoPortada: string;
 }
-export interface UsuarioRedesSociales {
+export interface usuarioredessociales {
   red: string;
   link: string;
 }

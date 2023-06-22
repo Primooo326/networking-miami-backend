@@ -1,7 +1,8 @@
 import pool from '../database';
 import { encrypt, compare, generateTokenSign } from '../tools';
 import { avatars } from '../datasets';
-import config from '../config';
+import {SECRETKEY} from '../config';
+
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
 
@@ -30,22 +31,22 @@ export const login = async (req, res) => {
 				);
 
 				const [lenguajesData]: any = await pool.query(
-					'SELECT lenguaje FROM UsuarioLenguajes WHERE usuario_id = ?',
+					'SELECT lenguaje FROM usuariolenguajes WHERE usuario_id = ?',
 					[user.id],
 				);
 
 				const [areaExperienciaData]: any = await pool.query(
-					'SELECT experiencia FROM UsuarioAreaExperiencia WHERE usuario_id = ?',
+					'SELECT experiencia FROM usuarioareaexperiencia WHERE usuario_id = ?',
 					[user.id],
 				);
 
 				const [temasInteresData]: any = await pool.query(
-					'SELECT interes FROM UsuarioTemasInteres WHERE usuario_id = ?',
+					'SELECT interes FROM usuariotemasinteres WHERE usuario_id = ?',
 					[user.id],
 				);
 
 				const [tipoConexionData]: any = await pool.query(
-					'SELECT conexion FROM UsuarioTipoConexion WHERE usuario_id = ?',
+					'SELECT conexion FROM usuariotipoconexion WHERE usuario_id = ?',
 					[user.id],
 				);
 
@@ -127,25 +128,25 @@ export const register = async (req, res) => {
 			);
 			lenguajes.forEach(async (lenguaje) => {
 				await pool.query(
-					'INSERT INTO UsuarioLenguajes (usuario_id,lenguaje) VALUES (?, ?)',
+					'INSERT INTO usuariolenguajes (usuario_id,lenguaje) VALUES (?, ?)',
 					[rows.insertId, lenguaje],
 				);
 			});
 			temasInteres.forEach(async (interes) => {
 				await pool.query(
-					'INSERT INTO UsuarioTemasInteres (usuario_id,interes) VALUES (?, ?)',
+					'INSERT INTO usuariotemasinteres (usuario_id,interes) VALUES (?, ?)',
 					[rows.insertId, interes],
 				);
 			});
 			tipoConexion.forEach(async (conexion) => {
 				await pool.query(
-					'INSERT INTO UsuarioTipoConexion (usuario_id,conexion) VALUES (?, ?)',
+					'INSERT INTO usuariotipoconexion (usuario_id,conexion) VALUES (?, ?)',
 					[rows.insertId, conexion],
 				);
 			});
 			areaExperiencia.forEach(async (experiencia) => {
 				await pool.query(
-					'INSERT INTO UsuarioAreaExperiencia (usuario_id,experiencia) VALUES (?, ?)',
+					'INSERT INTO usuarioareaexperiencia (usuario_id,experiencia) VALUES (?, ?)',
 					[rows.insertId, experiencia],
 				);
 			});
@@ -179,7 +180,7 @@ export const register = async (req, res) => {
 export const resetPassword = async (req, res) => {
 	try {
 		const { token, password } = req.body;
-		const { email }: any = jwt.verify(token, config.SECRETKEY);
+		const { email }: any = jwt.verify(token, SECRETKEY);
 		console.log(email, password);
 
 		const passwordEncrypted = await encrypt(password);

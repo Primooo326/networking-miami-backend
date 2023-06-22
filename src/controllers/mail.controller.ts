@@ -1,7 +1,7 @@
 import { sendEmail, generateTokenSign, validToken } from "../tools";
 import pool from "../database";
 import fs from "fs";
-import config from "../config";
+import {SECRETKEY} from "../config";
 import jwt from "jsonwebtoken";
 
 export const sendMailVerification = async (req, res) => {
@@ -145,7 +145,7 @@ export const resetPasswwordForm = async (req, res) => {
   const token = req.params.token;
   try {
     if (token) {
-      const decoded: any = jwt.verify(token, config.SECRETKEY);
+      const decoded: any = jwt.verify(token, SECRETKEY);
       console.log(decoded);
 
       res.send(

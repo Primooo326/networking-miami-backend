@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
-import config from "../config";
+import {SECRETKEY} from "../config";
+
 import pool from "../database";
 
 export const verifyToken = async (req, res, next) => {
@@ -7,7 +8,7 @@ export const verifyToken = async (req, res, next) => {
 
   try {
     if (token) {
-      const decoded: any = jwt.verify(token, config.SECRETKEY);
+      const decoded: any = jwt.verify(token, SECRETKEY);
       console.log(decoded);
       const [results]: any = await pool.query(
         "SELECT * FROM usuario WHERE id = ?",

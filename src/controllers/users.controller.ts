@@ -1,10 +1,10 @@
 import pool from '../database';
 import jwt from 'jsonwebtoken';
-import config from '../config';
+import {SECRETKEY} from '../config';
 export const readUsers = async (req, res) => {
 	const token = req.headers['x-access-token'];
 	try {
-		const decoded: any = jwt.verify(token, config.SECRETKEY);
+		const decoded: any = jwt.verify(token, SECRETKEY);
 		const [results]: any = await pool.query(
 			'SELECT * FROM contacto WHERE usuario_id = ?',
 			[decoded.id],
@@ -33,7 +33,7 @@ export const searchUser = async (req, res) => {
 
 
 try {
-	const decoded: any = jwt.verify(token, config.SECRETKEY);
+	const decoded: any = jwt.verify(token, SECRETKEY);
 
 	const [results]: any = await pool.query(
 		'SELECT * FROM contacto WHERE usuario_id = ?',
@@ -117,40 +117,40 @@ export const updateUserById = async (req, res) => {
 					id,
 				],
 			);
-			await pool.query('DELETE FROM UsuarioLenguajes WHERE usuario_id = ?', [
+			await pool.query('DELETE FROM usuariolenguajes WHERE usuario_id = ?', [
 				id,
 			]);
 			lenguajes.forEach(async (lenguaje) => {
 				await pool.query(
-					'INSERT INTO UsuarioLenguajes (usuario_id,lenguaje) VALUES (?, ?)',
+					'INSERT INTO usuariolenguajes (usuario_id,lenguaje) VALUES (?, ?)',
 					[id, lenguaje],
 				);
 			});
-			await pool.query('DELETE FROM UsuarioTemasInteres WHERE usuario_id = ?', [
+			await pool.query('DELETE FROM usuariotemasinteres WHERE usuario_id = ?', [
 				id,
 			]);
 			temasInteres.forEach(async (interes) => {
 				await pool.query(
-					'INSERT INTO UsuarioTemasInteres (usuario_id,interes) VALUES (?, ?)',
+					'INSERT INTO usuariotemasinteres (usuario_id,interes) VALUES (?, ?)',
 					[id, interes],
 				);
 			});
-			await pool.query('DELETE FROM UsuarioTipoConexion WHERE usuario_id = ?', [
+			await pool.query('DELETE FROM usuariotipoconexion WHERE usuario_id = ?', [
 				id,
 			]);
 			tipoConexion.forEach(async (conexion) => {
 				await pool.query(
-					'INSERT INTO UsuarioTipoConexion (usuario_id,conexion) VALUES (?, ?)',
+					'INSERT INTO usuariotipoconexion (usuario_id,conexion) VALUES (?, ?)',
 					[id, conexion],
 				);
 			});
 			await pool.query(
-				'DELETE FROM UsuarioAreaExperiencia WHERE usuario_id = ?',
+				'DELETE FROM usuarioareaexperiencia WHERE usuario_id = ?',
 				[id],
 			);
 			areaExperiencia.forEach(async (experiencia) => {
 				await pool.query(
-					'INSERT INTO UsuarioAreaExperiencia (usuario_id,experiencia) VALUES (?, ?)',
+					'INSERT INTO usuarioareaexperiencia (usuario_id,experiencia) VALUES (?, ?)',
 					[id, experiencia],
 				);
 			});

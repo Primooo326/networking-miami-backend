@@ -1,6 +1,6 @@
 import pool from '../database';
 import jwt from 'jsonwebtoken';
-import config from '../config';
+import {SECRETKEY} from '../config';
 export const createMatch = async (req, res) => {
 	const { idToMatch, idUser } = req.body;
 	try {
@@ -11,7 +11,7 @@ export const createMatch = async (req, res) => {
 
 		if (results.findIndex((c) => c.contacto_id === idToMatch) === -1) {
 			const [result]: any = await pool.query(
-				'INSERT INTO Contacto (usuario_id,contacto_id) VALUES (?, ?)',
+				'INSERT INTO contacto (usuario_id,contacto_id) VALUES (?, ?)',
 				[idUser, idToMatch],
 			);
 			res.status(200).json({
@@ -55,7 +55,7 @@ export const deleteMatch = async (req, res) => {
 	const token = req.headers['x-access-token'];
 
 	try {
-		const decoded: any = jwt.verify(token, config.SECRETKEY);
+		const decoded: any = jwt.verify(token, SECRETKEY);
 
 		const [results]: any = await pool.query(
 			'SELECT * FROM contacto WHERE usuario_id = ?',

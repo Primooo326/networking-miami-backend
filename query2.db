@@ -1,5 +1,5 @@
--- Tabla Usuario
-CREATE TABLE Usuario (
+-- Tabla usuario
+CREATE TABLE usuario (
   id INT PRIMARY KEY AUTO_INCREMENT,
   nombre VARCHAR(255),
   email VARCHAR(255),
@@ -17,51 +17,51 @@ CREATE TABLE Usuario (
   fechaIngreso VARCHAR(255)
 );
 
--- Tabla UsuarioTemasInteres
-CREATE TABLE UsuarioTemasInteres (
+-- Tabla usuariotemasinteres
+CREATE TABLE usuariotemasinteres (
   usuario_id INT,
   interes VARCHAR(255),
-  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla UsuarioAreaExperiencia
-CREATE TABLE UsuarioAreaExperiencia (
+-- Tabla usuarioareaexperiencia
+CREATE TABLE usuarioareaexperiencia (
   usuario_id INT,
   experiencia VARCHAR(255),
-  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla UsuarioTipoConexion
-CREATE TABLE UsuarioTipoConexion (
+-- Tabla usuariotipoconexion
+CREATE TABLE usuariotipoconexion (
   usuario_id INT,
   conexion VARCHAR(255),
-  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla UsuarioLenguajes
-CREATE TABLE UsuarioLenguajes (
+-- Tabla usuariolenguajes
+CREATE TABLE usuariolenguajes (
   usuario_id INT,
   lenguaje VARCHAR(255),
-  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla UsuarioOcupaciones
-CREATE TABLE UsuarioOcupaciones (
+-- Tabla usuarioocupaciones
+CREATE TABLE usuarioocupaciones (
   usuario_id INT,
   ocupacion VARCHAR(255),
-  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla UsuarioRedesSociales
-CREATE TABLE UsuarioRedesSociales (
+-- Tabla usuarioredessociales
+CREATE TABLE usuarioredessociales (
   usuario_id INT,
   red VARCHAR(255),
   link VARCHAR(255),
-  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla UsuarioPublicaciones
-CREATE TABLE UsuarioPublicaciones (
+-- Tabla usuariopublicaciones
+CREATE TABLE usuariopublicaciones (
   id INT PRIMARY KEY AUTO_INCREMENT,
   usuario_id INT,
   urlFotos TEXT,
@@ -71,61 +71,61 @@ CREATE TABLE UsuarioPublicaciones (
   reacciones TEXT,
   compartidos TEXT,
   precio DECIMAL(10, 2),
-  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla PublicacionCompartidos
-CREATE TABLE PublicacionCompartidos (
+-- Tabla publicacioncompartidos	
+CREATE TABLE publicacioncompartidos	 (
   id INT PRIMARY KEY AUTO_INCREMENT,
   publicacion_id INT,
   usuario_id INT,
-  FOREIGN KEY (publicacion_id) REFERENCES UsuarioPublicaciones(id),
-  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+  FOREIGN KEY (publicacion_id) REFERENCES usuariopublicaciones(id),
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla PublicacionReacciones
-CREATE TABLE PublicacionReacciones (
+-- Tabla publicacionreacciones
+CREATE TABLE publicacionreacciones (
   id INT PRIMARY KEY AUTO_INCREMENT,
   publicacion_id INT,
   usuario_id INT,
   reaccion VARCHAR(255),
-  FOREIGN KEY (publicacion_id) REFERENCES UsuarioPublicaciones(id),
-  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+  FOREIGN KEY (publicacion_id) REFERENCES usuariopublicaciones(id),
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla PublicacionComentarios
-CREATE TABLE PublicacionComentarios (
+-- Tabla publicacioncomentarios
+CREATE TABLE publicacioncomentarios (
   id INT PRIMARY KEY AUTO_INCREMENT,
   publicacion_id INT,
   usuario_id INT,
   comentario TEXT,
   fecha VARCHAR(255),
-  FOREIGN KEY (publicacion_id) REFERENCES UsuarioPublicaciones(id),
-  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+  FOREIGN KEY (publicacion_id) REFERENCES usuariopublicaciones(id),
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla Contacto
-CREATE TABLE Contacto (
-  FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+-- Tabla contacto
+CREATE TABLE contacto (
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
   usuario_id INT,
-  FOREIGN KEY (contacto_id) REFERENCES Usuario(id)
+  FOREIGN KEY (contacto_id) REFERENCES usuario(id)
   contacto_id INT,
 );
 
--- Tabla Chat
-CREATE TABLE Contacto (
+-- Tabla chat
+CREATE TABLE contacto (
   usuario_id INT,
   contacto_id INT,
-  FOREIGN KEY (usuario_id) REFERENCES Usuario(id),
-  FOREIGN KEY (contacto_id) REFERENCES Usuario(id)
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id),
+  FOREIGN KEY (contacto_id) REFERENCES usuario(id)
 );
 
 
--- Tabla Mensajes
-CREATE TABLE Mensajes (
+-- Tabla mensajes
+CREATE TABLE mensajes (
   id INT PRIMARY KEY AUTO_INCREMENT,
   chat_id INT,
   fecha VARCHAR(255),
   mensaje TEXT,
-  FOREIGN KEY (chat_id) REFERENCES Chat(id)
+  FOREIGN KEY (chat_id) REFERENCES chat(id)
 );
