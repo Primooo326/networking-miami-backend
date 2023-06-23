@@ -10,6 +10,8 @@ config();
     DB_DATABASE:"networking3",
     DB_PORT:"3306",
     SECRET_KEY:"pojasjidaoihs#447%78as_66",
+    URL_FRONT:"http://localhost:4200/",
+    URL_BACK:"http://localhost:4000/",
 }
  const production = {
     PORT:4000,
@@ -19,6 +21,8 @@ config();
     DB_DATABASE:"pruebawp_networking",
     DB_PORT:"3306",
     SECRET_KEY:"pojasjidaoihs#447%78as_66",
+    URL_FRONT:"https://networking.miami/",
+    URL_BACK:"https://nodejs.pruebawp.cymetria.com/"
 }
 
 export const configEnv = process.env.NODE_ENV === "production" ? production : development;

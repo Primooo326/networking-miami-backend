@@ -141,6 +141,7 @@ export const verifyTokenVerificationEmail = async (req, res) => {
     res.status(500).send(fs.readFileSync("tokenInvalid.html", "utf8"));
   }
 };
+
 export const resetPasswwordForm = async (req, res) => {
   const token = req.params.token;
   try {

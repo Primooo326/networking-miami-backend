@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import {configEnv} from "./config";
+import { configEnv } from './config';
 import nodemailer from "nodemailer";
 import fs from "fs";
 
@@ -36,22 +36,22 @@ export async function sendEmail(
       mailBuildData.subject = "Verificacion de correo";
       mailBuildData.htmlContent = fs
         .readFileSync("mailverification.html", "utf8")
-        .replace("{TOKEN}", data);
+        .replace("{TOKEN}", data).replace("{{URL}}",configEnv.URL_FRONT)
     } else if (typeEmail === "changeEmail") {
       mailBuildData.subject = "Cambio de correo";
       mailBuildData.htmlContent = fs
         .readFileSync("mailchange.html", "utf8")
-        .replace("{TOKEN}", data);
+        .replace("{TOKEN}", data).replace("{{URL}}",configEnv.URL_FRONT)
     } else if (typeEmail === "invitation") {
       mailBuildData.subject = "Invitacion";
       mailBuildData.htmlContent = fs
-        .readFileSync("mailinvitation.html", "utf8")
-        .replace("{USER}", data);
+        .readFileSync("mailinvitation.html", "utf8") 
+        .replace("{USER}", data).replace("{{URL}}",configEnv.URL_FRONT)
     } else if (typeEmail === "passwordReset") {
       mailBuildData.subject = "Recuperacion de contraseña";
       mailBuildData.htmlContent = fs
         .readFileSync("mailpasswordreset.html", "utf8")
-        .replace("{TOKEN}", data);
+        .replace("{TOKEN}", data).replace("{{URL}}",configEnv.URL_FRONT)
     } else {
       throw new Error("Email type not found");
     }
