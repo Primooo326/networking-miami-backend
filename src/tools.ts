@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import {SECRETKEY} from "./config";
+import {configEnv} from "./config";
 import nodemailer from "nodemailer";
 import fs from "fs";
 
@@ -12,14 +12,14 @@ export async function compare(data: string, data2: string) {
   return await bcrypt.compare(data, data2);
 }
 export function generateTokenSign(data: any, expiration: number | string) {
-  const token = jwt.sign(data, SECRETKEY, {
+  const token = jwt.sign(data, configEnv.SECRET_KEY, {
     expiresIn: expiration,
   });
   return token;
 }
 
 export function validToken(token: string) {
-  return jwt.verify(token, SECRETKEY);
+  return jwt.verify(token, configEnv.SECRET_KEY);
 }
 
 export async function sendEmail(

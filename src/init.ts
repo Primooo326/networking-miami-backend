@@ -5,19 +5,24 @@ import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/users.routes';
 import mailRoutes from './routes/mail.routes';
 import matchRoutes from './routes/match.routes';
-import fs from 'fs';
+import cors from 'cors';
 
 const app = express();
 
-import cors from 'cors';
 app.use(morgan('dev'));
+
 app.use(express.json());
+
 app.use(cors({origin: '*'}));
+
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(bodyParser.json());
+
 app.get('/', (req, res) => {
-	res.send(fs.readFileSync('resetPasswordSuccess.html', 'utf8'));
+	res.send("Welcome to networking backend ");
 });
+
 app.get('/ping', async (req, res) => {
 	const routes: any[] = [];
 	app._router.stack.forEach((middleware) => {
@@ -37,6 +42,7 @@ app.get('/ping', async (req, res) => {
 	});
 	res.json(routes);
 });
+
 app.use('/api/auth', authRoutes);
 app.use('/api/match', matchRoutes);
 app.use('/api/mail', mailRoutes);

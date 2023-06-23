@@ -1,10 +1,10 @@
 import pool from '../database';
 import jwt from 'jsonwebtoken';
-import {SECRETKEY} from '../config';
+import {configEnv} from '../config';
 export const readUsers = async (req, res) => {
 	const token = req.headers['x-access-token'];
 	try {
-		const decoded: any = jwt.verify(token, SECRETKEY);
+		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
 		const [results]: any = await pool.query(
 			'SELECT * FROM contacto WHERE usuario_id = ?',
 			[decoded.id],
@@ -33,12 +33,13 @@ export const searchUser = async (req, res) => {
 
 
 try {
-	const decoded: any = jwt.verify(token, SECRETKEY);
+	const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
 
 	const [results]: any = await pool.query(
 		'SELECT * FROM contacto WHERE usuario_id = ?',
 		[decoded.id],
 	);
+	console.log(decoded.id);
 	const ids = results.map((c) => c.contacto_id);
 	ids.push(decoded.id);
 	

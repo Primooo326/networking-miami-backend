@@ -1,6 +1,6 @@
 import pool from '../database';
 import jwt from 'jsonwebtoken';
-import {SECRETKEY} from '../config';
+import {configEnv} from '../config';
 export const createMatch = async (req, res) => {
 	const { idToMatch, idUser } = req.body;
 	try {
@@ -55,7 +55,7 @@ export const deleteMatch = async (req, res) => {
 	const token = req.headers['x-access-token'];
 
 	try {
-		const decoded: any = jwt.verify(token, SECRETKEY);
+		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
 
 		const [results]: any = await pool.query(
 			'SELECT * FROM contacto WHERE usuario_id = ?',

@@ -1,5 +1,5 @@
 import app from './init';
-import {PORT} from "./config";
+import {configEnv} from "./config";
 
-app.listen(PORT);
-console.info('app listen in port', PORT);
+app.listen(configEnv.PORT);
+console.info('app listen in port', configEnv.PORT);

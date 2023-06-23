@@ -1,8 +1,7 @@
 import pool from '../database';
 import { encrypt, compare, generateTokenSign } from '../tools';
 import { avatars } from '../datasets';
-import {SECRETKEY} from '../config';
-
+import {configEnv} from '../config';
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
 
@@ -23,6 +22,7 @@ export const login = async (req, res) => {
 			const esSimilar = await compare(password, user.password);
 
 			if (esSimilar) {
+				console.log(user.id);
 				const token = generateTokenSign({ id: user.id }, 86400);
 
 				const [userData]: any = await pool.query(
@@ -180,7 +180,7 @@ export const register = async (req, res) => {
 export const resetPassword = async (req, res) => {
 	try {
 		const { token, password } = req.body;
-		const { email }: any = jwt.verify(token, SECRETKEY);
+		const { email }: any = jwt.verify(token, configEnv.SECRET_KEY);
 		console.log(email, password);
 
 		const passwordEncrypted = await encrypt(password);
