@@ -45,13 +45,6 @@ CREATE TABLE usuariolenguajes (
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla usuarioocupaciones
-CREATE TABLE usuarioocupaciones (
-  usuario_id INT,
-  ocupacion VARCHAR(255),
-  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
-);
-
 -- Tabla usuarioredessociales
 CREATE TABLE usuarioredessociales (
   usuario_id INT,
@@ -60,72 +53,36 @@ CREATE TABLE usuarioredessociales (
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla usuariopublicaciones
-CREATE TABLE usuariopublicaciones (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  usuario_id INT,
-  urlFotos TEXT,
-  tipo VARCHAR(255),
-  descripcion TEXT,
-  comentarios TEXT,
-  reacciones TEXT,
-  compartidos TEXT,
-  precio DECIMAL(10, 2),
-  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
-);
-
--- Tabla publicacioncompartidos	
-CREATE TABLE publicacioncompartidos	 (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  publicacion_id INT,
-  usuario_id INT,
-  FOREIGN KEY (publicacion_id) REFERENCES usuariopublicaciones(id),
-  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
-);
-
--- Tabla publicacionreacciones
-CREATE TABLE publicacionreacciones (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  publicacion_id INT,
-  usuario_id INT,
-  reaccion VARCHAR(255),
-  FOREIGN KEY (publicacion_id) REFERENCES usuariopublicaciones(id),
-  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
-);
-
--- Tabla publicacioncomentarios
-CREATE TABLE publicacioncomentarios (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  publicacion_id INT,
-  usuario_id INT,
-  comentario TEXT,
-  fecha VARCHAR(255),
-  FOREIGN KEY (publicacion_id) REFERENCES usuariopublicaciones(id),
-  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
-);
 
 -- Tabla contacto
 CREATE TABLE contacto (
-  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
-  usuario_id INT,
-  FOREIGN KEY (contacto_id) REFERENCES usuario(id)
-  contacto_id INT,
-);
-
--- Tabla chat
-CREATE TABLE contacto (
+  
   usuario_id INT,
   contacto_id INT,
-  FOREIGN KEY (usuario_id) REFERENCES usuario(id),
-  FOREIGN KEY (contacto_id) REFERENCES usuario(id)
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id),
+    FOREIGN KEY (contacto_id) REFERENCES usuario(id)
 );
 
+CREATE TABLE areas_experiencia (
+	titulo VARCHAR(255),
+    descripcion TEXT
+);
+CREATE TABLE areas_intereses (
+	interes VARCHAR(255)
+);
+CREATE TABLE conexiones (
+	conexion VARCHAR(255)
+);
+CREATE TABLE lenguajes (
+	lenguaje VARCHAR(255)
+);
+CREATE TABLE condados (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(255)
+);
+CREATE TABLE ciudades (
 
--- Tabla mensajes
-CREATE TABLE mensajes (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  chat_id INT,
-  fecha VARCHAR(255),
-  mensaje TEXT,
-  FOREIGN KEY (chat_id) REFERENCES chat(id)
+  condado_id INT,
+  ciudad VARCHAR(255),
+  FOREIGN KEY (condado_id) REFERENCES condados(id)
 );

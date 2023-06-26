@@ -14,7 +14,39 @@ export const readUsers = async (req, res) => {
 		const [rows]: any = await pool.query(
 			`SELECT * FROM usuario WHERE id NOT IN (${ids}) LIMIT 50`,
 		);
-		res.json(rows);
+		const usuarios:any[] = []
+		for (const user of rows) {
+			const [lenguajesData]: any = await pool.query(
+				'SELECT lenguaje FROM usuariolenguajes WHERE usuario_id = ?',
+				[user.id],
+			);
+
+			const [areaExperienciaData]: any = await pool.query(
+				'SELECT experiencia FROM usuarioareaexperiencia WHERE usuario_id = ?',
+				[user.id],
+			);
+
+			const [temasInteresData]: any = await pool.query(
+				'SELECT interes FROM usuariotemasinteres WHERE usuario_id = ?',
+				[user.id],
+			);
+
+			const [tipoConexionData]: any = await pool.query(
+				'SELECT conexion FROM usuariotipoconexion WHERE usuario_id = ?',
+				[user.id],
+			);
+
+			const userDataWithRelations = {
+				...user,
+				lenguajes: lenguajesData.map((row) => row.lenguaje),
+				areaExperiencia: areaExperienciaData.map((row) => row.experiencia),
+				temasInteres: temasInteresData.map((row) => row.interes),
+				tipoConexion: tipoConexionData.map((row) => row.conexion),
+			};
+			usuarios.push(userDataWithRelations);
+		}
+		res.json(usuarios);
+		// res.json(rows);
 	} catch (error) {
 		res.status(500).send('registered failed');
 	}
@@ -50,8 +82,39 @@ try {
 		res.status(500).send('No query');
 	}else {
 		console.log(ids.toString());
-		const [rows] = await pool.query("SELECT * FROM usuario WHERE (LOWER(nombre) LIKE ? OR LOWER(email) LIKE ?) AND id NOT IN (?) LIMIT ? OFFSET ?",[`%${query}%`,`%${query}%`,ids, Number(batchsize), currentbatch * batchsize]);
-		res.send(rows)
+		const [rows]:any = await pool.query("SELECT * FROM usuario WHERE (LOWER(nombre) LIKE ? OR LOWER(email) LIKE ?) AND id NOT IN (?) LIMIT ? OFFSET ?",[`%${query}%`,`%${query}%`,ids, Number(batchsize), currentbatch * batchsize]);
+		const usuarios:any[] = []
+		for (const user of rows) {
+			const [lenguajesData]: any = await pool.query(
+				'SELECT lenguaje FROM usuariolenguajes WHERE usuario_id = ?',
+				[user.id],
+			);
+
+			const [areaExperienciaData]: any = await pool.query(
+				'SELECT experiencia FROM usuarioareaexperiencia WHERE usuario_id = ?',
+				[user.id],
+			);
+
+			const [temasInteresData]: any = await pool.query(
+				'SELECT interes FROM usuariotemasinteres WHERE usuario_id = ?',
+				[user.id],
+			);
+
+			const [tipoConexionData]: any = await pool.query(
+				'SELECT conexion FROM usuariotipoconexion WHERE usuario_id = ?',
+				[user.id],
+			);
+
+			const userDataWithRelations = {
+				...user,
+				lenguajes: lenguajesData.map((row) => row.lenguaje),
+				areaExperiencia: areaExperienciaData.map((row) => row.experiencia),
+				temasInteres: temasInteresData.map((row) => row.interes),
+				tipoConexion: tipoConexionData.map((row) => row.conexion),
+			};
+			usuarios.push(userDataWithRelations);
+		}
+		res.json(usuarios);
 	}
 } catch (error) {
 	res.status(500).send(error);

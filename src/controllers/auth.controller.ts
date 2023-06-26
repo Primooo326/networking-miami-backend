@@ -156,20 +156,7 @@ export const register = async (req, res) => {
 			res.status(200).json({
 				token,
 				id: rows.insertId,
-				nombre,
-				email,
-				password: passwordEncrypted,
-				fechaNacimiento,
-				verificado,
-				condado,
-				ciudad,
-				genero,
-				telefono,
-				biografia,
 				avatar,
-				fotoPortada,
-				objetivo,
-				fechaIngreso,
 			});
 		}
 	} catch (error) {
