@@ -8,6 +8,7 @@ router.post('/', userControllers.createUser);
 router.get('/', verifyToken, userControllers.readUsers);
 
 router.get('/search', userControllers.searchUser);
+router.post('/searchByParameters', userControllers.searchUserByParameters3);
 
 router.get('/:userId', userControllers.readUserById);
 
