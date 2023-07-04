@@ -1,6 +1,6 @@
 import pool from "../database";
 import jwt from "jsonwebtoken";
-import { configEnv } from "../config";
+import  configEnv  from "../config";
 export const readUsers = async (req, res) => {
   try {
     const token = req.headers["x-access-token"];

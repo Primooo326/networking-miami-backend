@@ -25,8 +25,8 @@ config();
     URL_BACK:"https://nodejs.pruebawp.cymetria.com/"
 }
 
-export const configEnv = process.env.NODE_ENV === "production" ? production : development;
-
+const configEnv = process.env.NODE_ENV === "production" ? production : development;
+ export default configEnv
 
 // export const PORT = process.env.PORT || 3000;
 // export const DB_HOST = process.env.DB_HOST || "localhost";

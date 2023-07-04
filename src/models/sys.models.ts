@@ -4,3 +4,4 @@ export enum TypeMail {
   passwordReset = "passwordReset",
   changeEmail = "changeEmail",
 }
+export type ENotifyTypes = 'match' | 'chat'

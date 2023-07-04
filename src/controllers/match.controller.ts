@@ -1,6 +1,6 @@
 import pool from '../database';
 import jwt from 'jsonwebtoken';
-import {configEnv} from '../config';
+import configEnv from '../config';
 export const createMatch = async (req, res) => {
 	const { idToMatch, idUser } = req.body;
 	try {

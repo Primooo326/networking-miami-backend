@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
-	res.send("Welcome to networking backend ");
+	res.send("Welcome to networking backend");
 });
 
 app.get('/ping', async (req, res) => {

@@ -1,7 +1,7 @@
 import { createPool } from "mysql2/promise";
-import {
+import 
   configEnv
-} from "./config";
+ from "./config";
 const pool = createPool({
   host: configEnv.DB_HOST,
   user: configEnv.DB_USER,

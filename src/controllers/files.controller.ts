@@ -1,5 +1,5 @@
 import path from "path";
-import {configEnv} from "../config"
+import configEnv from "../config"
 import fs from "fs"
 import pool from '../database';
 import jwt from 'jsonwebtoken';

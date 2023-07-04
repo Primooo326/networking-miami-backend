@@ -1,7 +1,7 @@
 import pool from '../database';
 import { encrypt, compare, generateTokenSign } from '../tools';
 import { avatars } from '../datasets';
-import { configEnv } from '../config';
+import configEnv  from '../config';
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
 

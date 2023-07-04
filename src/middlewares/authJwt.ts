@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import {configEnv} from "../config";
+import configEnv from "../config";
 
 import pool from "../database";
 

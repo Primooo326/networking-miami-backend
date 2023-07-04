@@ -1,7 +1,7 @@
 import { sendEmail, generateTokenSign, validToken } from "../tools";
 import pool from "../database";
 import fs from "fs";
-import {configEnv} from "../config";
+import configEnv from "../config";
 import jwt from "jsonwebtoken";
 
 export const sendMailVerification = async (req, res) => {
@@ -111,13 +111,13 @@ export const verifyTokenChangeEmail = async (req, res) => {
       [newEmail, email]
     );
     if (result.affectedRows > 0) {
-      res.send(fs.readFileSync("mailchangesuccess.html", "utf8"));
+      res.send(fs.readFileSync("views/mailchangesuccess.html", "utf8"));
     } else {
       res.status(500).send(result);
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send(fs.readFileSync("tokenInvalid.html", "utf8"));
+    res.status(500).send(fs.readFileSync("views/tokenInvalid.html", "utf8").replace("{URL}", configEnv.URL_FRONT));
   }
 };
 
@@ -133,12 +133,12 @@ export const verifyTokenVerificationEmail = async (req, res) => {
     );
     if (result.affectedRows > 0) {
       // res.json(result);
-      res.send(fs.readFileSync("mailverifyed.html", "utf8"));
+      res.send(fs.readFileSync("views/mailverifyed.html", "utf8"));
     } else {
       res.status(500).send(result);
     }
   } catch (error) {
-    res.status(500).send(fs.readFileSync("tokenInvalid.html", "utf8"));
+    res.status(500).send(fs.readFileSync("views/tokenInvalid.html", "utf8").replace("{URL}", configEnv.URL_FRONT));
   }
 };
 
@@ -150,12 +150,12 @@ export const resetPasswwordForm = async (req, res) => {
       console.log(decoded);
 
       res.send(
-        fs.readFileSync("resetPassword.html", "utf8").replace("{TOKEN}", token)
+        fs.readFileSync("views/resetPassword.html", "utf8").replace("{TOKEN}", token)
       );
     } else {
       return res.status(403).json({ message: "no token available" });
     }
   } catch (error) {
-    res.status(500).send(fs.readFileSync("tokenInvalid.html", "utf8"));
+    res.status(500).send(fs.readFileSync("views/tokenInvalid.html", "utf8").replace("{URL}", configEnv.URL_FRONT));
   }
 };

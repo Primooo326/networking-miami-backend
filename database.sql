@@ -74,6 +74,14 @@ CREATE TABLE usuarioNotificaciones (
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
+CREATE TABLE usuarios_conectados (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    socket_id VARCHAR(255) NOT NULL,
+    usuario_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+);
+
 CREATE TABLE areas_experiencia (
 	titulo VARCHAR(255),
     descripcion TEXT
