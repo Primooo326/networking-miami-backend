@@ -63,6 +63,17 @@ CREATE TABLE contacto (
     FOREIGN KEY (contacto_id) REFERENCES usuario(id)
 );
 
+
+-- Tabla usuariolenguajes
+CREATE TABLE usuarioNotificaciones (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  usuario_id INT,
+  titulo VARCHAR(255),
+  body TEXT,
+  data TEXT,
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+);
+
 CREATE TABLE areas_experiencia (
 	titulo VARCHAR(255),
     descripcion TEXT
@@ -81,7 +92,6 @@ CREATE TABLE condados (
   nombre VARCHAR(255)
 );
 CREATE TABLE ciudades (
-
   condado_id INT,
   ciudad VARCHAR(255),
   FOREIGN KEY (condado_id) REFERENCES condados(id)
