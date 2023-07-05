@@ -14,6 +14,10 @@ export const createMatch = async (req, res) => {
 				'INSERT INTO contacto (usuario_id,contacto_id) VALUES (?, ?)',
 				[idUser, idToMatch],
 			);
+			await pool.query(
+				'INSERT INTO contacto (usuario_id,contacto_id) VALUES (?, ?)',
+				[idToMatch, idUser],
+			);
 			res.status(200).json({
 				result,
 			});
@@ -25,6 +29,35 @@ export const createMatch = async (req, res) => {
 		res.status(500).send('registered failed');
 	}
 };
+
+export const requestMatch = async (req, res) => {
+	console.log(req.body);
+	const { usuario_request, usuario_id } = req.body;
+	try {
+		const [results]: any = await pool.query(
+			'SELECT * FROM contacto WHERE usuario_id = ?',
+			[usuario_id],
+		);
+
+		if (results.findIndex((c) => c.contacto_id === usuario_request.id) === -1) {
+
+			const [result]: any = await pool.query(
+				'INSERT INTO usuario_solicitudes (usuario_id,contacto_id,tipo,estado) VALUES (?, ?, ?, ?)',
+				[usuario_id, usuario_request.id, 'match', 'pendiente'],
+			);
+
+			res.status(200).json({
+				result,
+			});
+		} else {
+			res.status(500).send('User already exist');
+		}
+	} catch (error) {
+		console.error('Error during registered:', error);
+		res.status(500).send('registered failed');
+	}
+};
+
 export const readMatch = async (req, res) => {
 	const { id } = req.params;
 	console.log(id);

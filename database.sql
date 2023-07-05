@@ -59,11 +59,20 @@ CREATE TABLE contacto (
   
   usuario_id INT,
   contacto_id INT,
+  estado VARCHAR(255),
     FOREIGN KEY (usuario_id) REFERENCES usuario(id),
     FOREIGN KEY (contacto_id) REFERENCES usuario(id)
 );
 
-
+CREATE TABLE usuario_solicitudes (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  usuario_id INT,
+  contacto_id INT,
+  tipo VARCHAR(255),
+  estado VARCHAR(255),
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id),
+  FOREIGN KEY (contacto_id) REFERENCES usuario(id)
+);
 -- Tabla usuariolenguajes
 CREATE TABLE usuarioNotificaciones (
   id INT PRIMARY KEY AUTO_INCREMENT,
