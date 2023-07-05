@@ -178,11 +178,11 @@ export const resetPassword = async (req, res) => {
 			[passwordEncrypted, email],
 		);
 		if (result.affectedRows > 0) {
-			res.send(fs.readFileSync('resetPasswordSuccess.html', 'utf8'));
+			res.send(fs.readFileSync('views/resetPasswordSuccess.html', 'utf8').replace("{{URL}}",configEnv.URL_FRONT));
 		} else {
-			res.send(fs.readFileSync('resetPasswordSuccess.html', 'utf8'));
+			res.send(fs.readFileSync('views/resetPasswordSuccess.html', 'utf8').replace("{{URL}}",configEnv.URL_FRONT));
 		}
 	} catch (error) {
-		res.status(500).send(fs.readFileSync('tokenInvalid.html', 'utf8'));
+		res.status(500).send(fs.readFileSync('views/tokenInvalid.html.html', 'utf8'));
 	}
 };

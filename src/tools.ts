@@ -36,22 +36,22 @@ export async function sendEmail(
       mailBuildData.subject = "Verificacion de correo";
       mailBuildData.htmlContent = fs
         .readFileSync("views/mailverification.html", "utf8")
-        .replace("{TOKEN}", data).replace("{{URL}}",configEnv.URL_FRONT)
+        .replace("{{TOKEN}}", data).replace("{{URL}}",configEnv.URL_BACK)
     } else if (typeEmail === "changeEmail") {
       mailBuildData.subject = "Cambio de correo";
       mailBuildData.htmlContent = fs
         .readFileSync("views/mailchange.html", "utf8")
-        .replace("{TOKEN}", data).replace("{{URL}}",configEnv.URL_FRONT)
+        .replace("{{TOKEN}}", data).replace("{{URL}}",configEnv.URL_BACK)
     } else if (typeEmail === "invitation") {
       mailBuildData.subject = "Invitacion";
       mailBuildData.htmlContent = fs
         .readFileSync("views/mailinvitation.html", "utf8") 
-        .replace("{USER}", data).replace("{{URL}}",configEnv.URL_FRONT)
+        .replace("{{USER}}", data).replace("{{URL}}",configEnv.URL_FRONT)
     } else if (typeEmail === "passwordReset") {
       mailBuildData.subject = "Recuperacion de contraseña";
       mailBuildData.htmlContent = fs
         .readFileSync("views/mailpasswordreset.html", "utf8")
-        .replace("{TOKEN}", data).replace("{{URL}}",configEnv.URL_FRONT)
+        .replace("{{TOKEN}}", data).replace("{{URL}}",configEnv.URL_BACK)
     } else {
       throw new Error("Email type not found");
     }

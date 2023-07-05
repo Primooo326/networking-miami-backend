@@ -19,7 +19,6 @@ export const sendMailVerification = async (req, res) => {
       const mail = await sendEmail(email, "verification", token);
       const myPromise = new Promise((resolve, reject) => {
         // Simulamos una operación asincrónica que tarda 2 segundos en completarse
-        setTimeout(() => {
           const success = true;
 
           if (success) {
@@ -29,7 +28,6 @@ export const sendMailVerification = async (req, res) => {
             // La operación falló
             reject("Error en la operación");
           }
-        }, 5000);
       });
       await myPromise
         .then((result) => {
@@ -83,10 +81,16 @@ export const sendMailChangeMail = async (req, res) => {
       "SELECT * FROM usuario WHERE email = ?",
       [email]
     );
+    const [results2]: any = await pool.query(
+      "SELECT * FROM usuario WHERE email = ?",
+      [newEmail]
+    );
 
     if (results.length === 0) {
       res.status(404).send("Email does not exist");
-    } else {
+    } else if(results2.length > 0) {
+      res.status(404).send("New email already exists");
+    }else {
       const token = generateTokenSign({ email, newEmail }, 86400);
       console.log(newEmail);
       const mail = await sendEmail(newEmail, "changeEmail", token);
@@ -111,13 +115,13 @@ export const verifyTokenChangeEmail = async (req, res) => {
       [newEmail, email]
     );
     if (result.affectedRows > 0) {
-      res.send(fs.readFileSync("views/mailchangesuccess.html", "utf8"));
+      res.send(fs.readFileSync("views/mailchangesuccess.html", "utf8").replace("{{URL}}", configEnv.URL_FRONT));
     } else {
       res.status(500).send(result);
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send(fs.readFileSync("views/tokenInvalid.html", "utf8").replace("{URL}", configEnv.URL_FRONT));
+    res.status(500).send(fs.readFileSync("views/tokenInvalid.html", "utf8").replace("{{URL}}", configEnv.URL_BACK));
   }
 };
 
@@ -133,12 +137,12 @@ export const verifyTokenVerificationEmail = async (req, res) => {
     );
     if (result.affectedRows > 0) {
       // res.json(result);
-      res.send(fs.readFileSync("views/mailverifyed.html", "utf8"));
+      res.send(fs.readFileSync("views/mailverifyed.html", "utf8").replace("{{URL}}", configEnv.URL_FRONT));
     } else {
       res.status(500).send(result);
     }
   } catch (error) {
-    res.status(500).send(fs.readFileSync("views/tokenInvalid.html", "utf8").replace("{URL}", configEnv.URL_FRONT));
+    res.status(500).send(fs.readFileSync("views/tokenInvalid.html", "utf8").replace("{{URL}}", configEnv.URL_BACK));
   }
 };
 
@@ -150,12 +154,12 @@ export const resetPasswwordForm = async (req, res) => {
       console.log(decoded);
 
       res.send(
-        fs.readFileSync("views/resetPassword.html", "utf8").replace("{TOKEN}", token)
+        fs.readFileSync("views/resetPassword.html", "utf8").replace("{{TOKEN}}", token).replace("{{URL}}", configEnv.URL_BACK)
       );
     } else {
       return res.status(403).json({ message: "no token available" });
     }
   } catch (error) {
-    res.status(500).send(fs.readFileSync("views/tokenInvalid.html", "utf8").replace("{URL}", configEnv.URL_FRONT));
+    res.status(500).send(fs.readFileSync("views/tokenInvalid.html", "utf8").replace("{{URL}}", configEnv.URL_BACK));
   }
 };
