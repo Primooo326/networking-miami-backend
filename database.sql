@@ -68,9 +68,12 @@ CREATE TABLE contacto (
 CREATE TABLE usuarioNotificaciones (
   id INT PRIMARY KEY AUTO_INCREMENT,
   usuario_id INT,
-  titulo VARCHAR(255),
-  body TEXT,
+  title VARCHAR(255),
+  message TEXT,
   data TEXT,
+  time VARCHAR(255),
+  estado VARCHAR(255),
+  type VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 

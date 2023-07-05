@@ -5,3 +5,4 @@ export enum TypeMail {
   changeEmail = "changeEmail",
 }
 export type ENotifyTypes = 'match' | 'chat'
+export type ENotifyStatus = "leido" | "no leido" | "eliminado";

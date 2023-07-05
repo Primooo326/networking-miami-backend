@@ -7,6 +7,7 @@ import mailRoutes from './routes/mail.routes';
 import matchRoutes from './routes/match.routes';
 import filesRoutes from './routes/files.routes';
 import adminRoutes from './routes/admin.routes';
+import notifyRoutes from './routes/notify.routes';
 import cors from 'cors';
 
 const app = express();
@@ -44,6 +45,7 @@ app.get('/ping', async (req, res) => {
 	});
 	res.json(routes);
 });
+app.use('/api/notify', notifyRoutes )
 app.use('/api/admin', adminRoutes )
 app.use('/api/file', filesRoutes )
 app.use('/api/auth', authRoutes);
