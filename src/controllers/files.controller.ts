@@ -27,6 +27,10 @@ export const getFile = async (req,res) =>{
             if(err) throw res.send(err);
             res.send(data)
         })
+        // fs.readFile(path.join(__dirname,`../images/${req.params.filename}`), (err,data) =>{
+        //     if(err) throw res.send(err);
+        //     res.send(data)
+        // })
     } catch (error) {
         res.send(error)
     }

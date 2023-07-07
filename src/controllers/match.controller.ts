@@ -1,6 +1,8 @@
 import pool from '../database';
 import jwt from 'jsonwebtoken';
 import configEnv from '../config';
+import { getSocketId } from "../socketHandlers/user.handlers";
+import { getSocketInstance } from "../socket";
 
 
 export const createMatch = async (req, res) => {
@@ -28,6 +30,9 @@ export const createMatch = async (req, res) => {
 				'DELETE FROM usuario_notificaciones WHERE usuario_id = ?',
 				[idToMatch],
 			);
+			const io = getSocketInstance();
+			const socketId = await getSocketId(idToMatch);
+			if (socketId) io.to(socketId).emit('newMatch', req.body);
 			res.status(200).json({
 				result,
 			});
@@ -171,6 +176,7 @@ export const deleteRequestMatch = async (req, res) => {
 	res.status(200).json({
 		result: "ok",
 	});
+
 
 
 	} catch (error) {
