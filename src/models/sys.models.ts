@@ -6,3 +6,4 @@ export enum TypeMail {
 }
 export type ENotifyTypes = 'match' | 'chat'
 export type ENotifyStatus = "leido" | "no leido" | "eliminado";
+export type ESolicitudStatus = "pendiente" | "aceptada" |"rechazada" | "cancelada";

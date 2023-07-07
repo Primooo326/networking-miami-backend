@@ -1,10 +1,13 @@
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { userConnnect, userDisconnect, getSocketId } from "./socketHandlers/user.handlers";
-import { userNotify } from "./socketHandlers/notify.handlers"; 
-export default function (server) {
-  const io = new Server(server, { cors: { origin: "*" } });
+import { userNotify } from "./socketHandlers/notify.handlers";
 
-  io.on("connection", (socket) => {
+let ioInstance: Server;
+
+export function initializeSocket(server) {
+  ioInstance = new Server(server, { cors: { origin: "*" } });
+
+  ioInstance.on("connection", (socket: Socket) => {
     console.log("Alguien se ha conectado con Sockets");
 
     socket.on("userConnect", async (data) => {
@@ -17,12 +20,16 @@ export default function (server) {
       await userDisconnect(socket.id);
     });
 
-    socket.on("new-notify",async (data)=>{
-      console.log("notify:  ",data);
-      const response = await userNotify(data,data.type)
-      const socketId = await getSocketId(data.data.usuario_id)
-      console.log("socketId: ",socketId);
-      io.to(socketId).emit("notify",response)
-    })
+    socket.on("new-notify", async (data) => {
+      console.log("notify:  ", data);
+      const response = await userNotify(data, data.type);
+      const socketId = await getSocketId(data.data.usuario_id);
+      console.log("socketId: ", socketId);
+      ioInstance.to(socketId).emit("notify", response);
+    });
   });
+}
+
+export function getSocketInstance() {
+  return ioInstance;
 }

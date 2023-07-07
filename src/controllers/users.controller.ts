@@ -6,17 +6,17 @@ export const readUsers = async (req, res) => {
     const token = req.headers["x-access-token"];
     const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
     const [results]: any = await pool.query(
-      "SELECT * FROM contacto WHERE usuario_id = ?",
+      "SELECT * FROM usuario_contacto WHERE usuario_id = ?",
       [decoded.id]
     );
-    const [solicitudes]: any = await pool.query(
-      "SELECT * FROM usuario_solicitudes WHERE contacto_id = ?",
-      [decoded.id]
-    );
+    // const [solicitudes]: any = await pool.query(
+    //   "SELECT * FROM usuario_solicitudes WHERE contacto_id = ?",
+    //   [decoded.id]
+    // );
     let ids = results.map((c) => c.contacto_id);
     ids.push(decoded.id);
 
-    ids = [...ids, ...solicitudes.map((s) => s.usuario_id)]
+    // ids = [...ids, ...solicitudes.map((s) => s.usuario_id)]
     const [rows]: any = await pool.query(
       `SELECT * FROM usuario WHERE id NOT IN (${ids})`
     );
@@ -53,6 +53,7 @@ export const readUsers = async (req, res) => {
     }
     res.json(usuarios);
   } catch (error) {
+    console.log(error);
     res.status(500).send("registered failed");
   }
 };
@@ -72,7 +73,7 @@ export const searchUser = async (req, res) => {
     const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
 
     const [results]: any = await pool.query(
-      "SELECT * FROM contacto WHERE usuario_id = ?",
+      "SELECT * FROM usuario_contacto WHERE usuario_id = ?",
       [decoded.id]
     );
     const [solicitudes]: any = await pool.query(

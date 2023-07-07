@@ -9,9 +9,6 @@ import { verifyToken } from "../middlewares/authJwt";
 const router = Router();
 const storage = multer.diskStorage({
   destination: "./images",
-
-
-
   filename: function (req, file, cb) {
     
   if (!fs.existsSync("images")) {

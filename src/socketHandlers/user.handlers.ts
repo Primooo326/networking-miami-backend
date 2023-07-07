@@ -37,7 +37,8 @@ export const getSocketId = async (id) => {
       "SELECT * FROM usuarios_conectados WHERE usuario_id = ?",
       [id]
     );
-    return rows[0].socket_id;
+    if(rows.length === 0) return null;
+    else return rows[0].socket_id;
   } catch (error) {
     console.log(error);
   }

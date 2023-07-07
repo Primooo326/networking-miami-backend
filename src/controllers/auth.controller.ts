@@ -95,6 +95,12 @@ export const register = async (req, res) => {
 	if (!avatar) {
 		avatar = avatars[Math.floor(Math.random() * avatars.length)];
 	}
+	if(!fotoPortada){
+
+		// fotoPortada = 'https://res.cloudinary.com/djlmqpd2n/image/upload/v1623344559/Portada%20de%20perfil%20por%20defecto.png'
+		fotoPortada = 'https://img.freepik.com/free-photo/glitch-effect-black-background_53876-129025.jpg?w=740&t=st=1686934648~exp=1686935248~hmac=1ce13f8749d5e2fddc16cfa874fa7ac7b6ac58c88576f7e70527eb6bf08249c3'
+	}
+
 	try {
 		const [results]: any = await pool.query(
 			'SELECT * FROM usuario WHERE email = ?',
@@ -121,7 +127,7 @@ export const register = async (req, res) => {
 					telefono,
 					biografia,
 					avatar,
-					'https://img.freepik.com/free-photo/glitch-effect-black-background_53876-129025.jpg?w=740&t=st=1686934648~exp=1686935248~hmac=1ce13f8749d5e2fddc16cfa874fa7ac7b6ac58c88576f7e70527eb6bf08249c3',
+					fotoPortada,
 					objetivo,
 					fechaIngreso,
 				],

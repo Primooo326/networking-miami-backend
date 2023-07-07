@@ -1,5 +1,4 @@
--- Tabla usuario
-CREATE TABLE usuario (
+CREATE TABLE IF NOT EXISTS usuario (
   id INT PRIMARY KEY AUTO_INCREMENT,
   nombre VARCHAR(255),
   email VARCHAR(255),
@@ -17,36 +16,31 @@ CREATE TABLE usuario (
   fechaIngreso VARCHAR(255)
 );
 
--- Tabla usuariotemasinteres
-CREATE TABLE usuariotemasinteres (
+CREATE TABLE IF NOT EXISTS usuariotemasinteres (
   usuario_id INT,
   interes VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla usuarioareaexperiencia
-CREATE TABLE usuarioareaexperiencia (
+CREATE TABLE IF NOT EXISTS usuarioareaexperiencia (
   usuario_id INT,
   experiencia VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla usuariotipoconexion
-CREATE TABLE usuariotipoconexion (
+CREATE TABLE IF NOT EXISTS usuariotipoconexion (
   usuario_id INT,
   conexion VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla usuariolenguajes
-CREATE TABLE usuariolenguajes (
+CREATE TABLE IF NOT EXISTS usuariolenguajes (
   usuario_id INT,
   lenguaje VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- Tabla usuarioredessociales
-CREATE TABLE usuarioredessociales (
+CREATE TABLE IF NOT EXISTS usuarioredessociales (
   usuario_id INT,
   red VARCHAR(255),
   link VARCHAR(255),
@@ -54,27 +48,24 @@ CREATE TABLE usuarioredessociales (
 );
 
 
--- Tabla contacto
-CREATE TABLE contacto (
+CREATE TABLE IF NOT EXISTS usuario_contacto (
   
   usuario_id INT,
   contacto_id INT,
-  estado VARCHAR(255),
     FOREIGN KEY (usuario_id) REFERENCES usuario(id),
     FOREIGN KEY (contacto_id) REFERENCES usuario(id)
 );
 
-CREATE TABLE usuario_solicitudes (
+CREATE TABLE IF NOT EXISTS usuario_solicitudes (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  usuario_id INT,
-  contacto_id INT,
-  tipo VARCHAR(255),
+  solicitante_id INT,
+  receptor_id INT,
+  fecha_solicitud VARCHAR(255),
   estado VARCHAR(255),
-  FOREIGN KEY (usuario_id) REFERENCES usuario(id),
-  FOREIGN KEY (contacto_id) REFERENCES usuario(id)
+  FOREIGN KEY (solicitante_id) REFERENCES usuario(id),
+  FOREIGN KEY (receptor_id) REFERENCES usuario(id)
 );
--- Tabla usuariolenguajes
-CREATE TABLE usuarioNotificaciones (
+CREATE TABLE IF NOT EXISTS usuario_notificaciones (
   id INT PRIMARY KEY AUTO_INCREMENT,
   usuario_id INT,
   title VARCHAR(255),
@@ -86,7 +77,7 @@ CREATE TABLE usuarioNotificaciones (
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
-CREATE TABLE usuarios_conectados (
+CREATE TABLE IF NOT EXISTS usuarios_conectados (
     id INT PRIMARY KEY AUTO_INCREMENT,
     socket_id VARCHAR(255) NOT NULL,
     usuario_id INT,
@@ -94,24 +85,27 @@ CREATE TABLE usuarios_conectados (
     FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
-CREATE TABLE areas_experiencia (
+CREATE TABLE IF NOT EXISTS areas_experiencia (
 	titulo VARCHAR(255),
     descripcion TEXT
 );
-CREATE TABLE areas_intereses (
+CREATE TABLE IF NOT EXISTS areas_intereses (
 	interes VARCHAR(255)
 );
-CREATE TABLE conexiones (
+CREATE TABLE IF NOT EXISTS conexiones (
 	conexion VARCHAR(255)
 );
-CREATE TABLE lenguajes (
+
+
+CREATE TABLE IF NOT EXISTS lenguajes (
 	lenguaje VARCHAR(255)
 );
-CREATE TABLE condados (
+
+CREATE TABLE IF NOT EXISTS condados (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(255)
 );
-CREATE TABLE ciudades (
+CREATE TABLE IF NOT EXISTS ciudades (
   condado_id INT,
   ciudad VARCHAR(255),
   FOREIGN KEY (condado_id) REFERENCES condados(id)

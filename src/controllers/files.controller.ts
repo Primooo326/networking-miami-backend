@@ -11,7 +11,7 @@ export const uploadFile = async (req,res) =>{
 		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
         const [result]: any = await pool.query('UPDATE usuario SET avatar = ? WHERE id = ?', [`${configEnv.URL_BACK}api/file/${req.file.filename}`,decoded.id]) 
         
-    res.json({path:`${configEnv.URL_BACK}api/file/${req.file.filename}`})
+        res.json({path:`${configEnv.URL_BACK}api/file/${req.file.filename}`,request:req.file})
 
         
     } catch (error) {
