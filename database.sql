@@ -85,6 +85,21 @@ CREATE TABLE IF NOT EXISTS usuarios_conectados (
     FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
+CREATE TABLE Conversaciones (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre VARCHAR(50)
+);
+
+CREATE TABLE Mensajes (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  conversacion_id INT,
+  remitente_id INT,
+  contenido VARCHAR(255),
+  fecha_envio DATETIME,
+  FOREIGN KEY (conversacion_id) REFERENCES Conversaciones(id),
+  FOREIGN KEY (remitente_id) REFERENCES Usuarios(id)
+);
+
 CREATE TABLE IF NOT EXISTS areas_experiencia (
 	titulo VARCHAR(255),
     descripcion TEXT

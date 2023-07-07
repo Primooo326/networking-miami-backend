@@ -145,7 +145,7 @@ export const readMatch = async (req, res) => {
     );
     console.log(results);
     if (results.length === 0) {
-      return res.status(200).json({ result: [] });
+      return res.status(200).json( [] );
     } else {
       const ids = results.map((c) => ` id = ${c.contacto_id} `).join(" OR");
       const [result]: any = await pool.query(
