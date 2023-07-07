@@ -11,6 +11,7 @@ router.get('/requestmatches', verifyToken, matchControllers.readMyRequest);
 router.get('/pendingmatches', verifyToken, matchControllers.readPendingMatch);
 router.get('/:id', verifyToken, matchControllers.readMatch);
 router.delete('/deleteRequestMatch/:id', verifyToken, matchControllers.deleteRequestMatch);
+router.delete('/rejectPendingMatch/:id', verifyToken, matchControllers.rejectPendingMatch);
 router.delete('/deleteMatch/:id', verifyToken, matchControllers.deleteMatch);
 
 export default router;

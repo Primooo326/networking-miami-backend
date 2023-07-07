@@ -185,6 +185,22 @@ export const deleteRequestMatch = async (req, res) => {
 	}
 };
 
+export const rejectPendingMatch = async (req, res) => {
+	const { id } = req.params;
+	const token = req.headers['x-access-token'];
+	try {
+		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
+	await pool.query("DELETE FROM usuario_solicitudes WHERE solicitante_id = ? AND receptor_id = ?",[id, decoded.id])
+	res.status(200).json({
+		result: "ok",
+	});
+	
+	} catch (error) {
+		console.error('Error during registered:', error);
+		res.status(500).send('registered failed');
+	}
+};
+
 export const deleteMatch = async (req, res) => {
 	const { id } = req.params;
 	const token = req.headers['x-access-token'];
