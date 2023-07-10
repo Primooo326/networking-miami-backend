@@ -31,7 +31,41 @@ export const createMatch = async (req, res) => {
       );
       const io = getSocketInstance();
       const socketId = await getSocketId(idToMatch);
-      if (socketId) io.to(socketId).emit("newMatch", req.body);
+
+      const [userData]: any = await pool.query(
+        'SELECT * FROM usuario WHERE id = ?',
+        [idToMatch],
+      );
+
+      const [lenguajesData]: any = await pool.query(
+        'SELECT lenguaje FROM usuariolenguajes WHERE usuario_id = ?',
+        [idToMatch],
+      );
+
+      const [areaExperienciaData]: any = await pool.query(
+        'SELECT experiencia FROM usuarioareaexperiencia WHERE usuario_id = ?',
+        [idToMatch],
+      );
+
+      const [temasInteresData]: any = await pool.query(
+        'SELECT interes FROM usuariotemasinteres WHERE usuario_id = ?',
+        [idToMatch],
+      );
+
+      const [tipoConexionData]: any = await pool.query(
+        'SELECT conexion FROM usuariotipoconexion WHERE usuario_id = ?',
+        [idToMatch],
+      );
+
+      const userDataWithRelations = {
+        ...userData[0],
+        lenguajes: lenguajesData.map((row) => row.lenguaje),
+        areaExperiencia: areaExperienciaData.map((row) => row.experiencia),
+        temasInteres: temasInteresData.map((row) => row.interes),
+        tipoConexion: tipoConexionData.map((row) => row.conexion),
+      };
+
+      if (socketId) io.to(socketId).emit("newMatch", userDataWithRelations);
       res.status(200).json({
         result,
       });
