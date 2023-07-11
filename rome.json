@@ -6,25 +6,24 @@
 		"enabled": true,
 		"rules": {
 			"all": true,
-			"suspicious":{
-				"noExplicitAny":"off",
-				"noAssignInExpressions":"off"
+			"suspicious": {
+				"noExplicitAny": "off",
+				"noAssignInExpressions": "off",
+				"noDoubleEquals": "off"
 			},
-			"nursery":{
-				"noConsoleLog":"off"
+			"nursery": {
+				"noConsoleLog": "off"
 			}
 		}
 	},
-	"formatter":{
+	"formatter": {
 		"enabled": true,
 		"formatWithErrors": true
-
 	},
-	"javascript":{
-		"formatter":{
+	"javascript": {
+		"formatter": {
 			"quoteProperties": "asNeeded",
 			"quoteStyle": "single"
 		}
-
 	}
 }

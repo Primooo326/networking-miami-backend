@@ -56,6 +56,11 @@ export const createMatch = async (req, res) => {
 				[idToMatch],
 			);
 
+			await pool.query(
+				'INSERT INTO Conversaciones (nombre, usuario_id_1, usuario_id_2) VALUES (?, ?, ?)',
+				['chat', idUser, idToMatch],
+			);
+
 			const userDataWithRelations = {
 				...userData[0],
 				lenguajes: lenguajesData.map((row) => row.lenguaje),
@@ -92,7 +97,7 @@ export const requestMatch = async (req, res, next) => {
 		);
 
 		if (true) {
-			const [result]: any = await pool.query(
+			await pool.query(
 				'INSERT INTO usuario_solicitudes (solicitante_id,receptor_id,fecha_solicitud,estado) VALUES (?, ?, ?, ?)',
 				[usuario_request.id, usuario_id, new Date().toISOString(), 'pendiente'],
 			);
@@ -304,6 +309,29 @@ export const deleteMatch = async (req, res) => {
 			const socketId = await getSocketId(id);
 			if (socketId) {
 				ioSocket.to(socketId).emit('deleteMatch', { id: decoded.id });
+			}
+			// CREATE TABLE usuario_mensajes (
+			// 	id INT PRIMARY KEY AUTO_INCREMENT,
+			// 	conversacion_id INT,
+			// 	remitente_id INT,
+			// 	contenido VARCHAR(255),
+			// 	fecha_envio VARCHAR(255),
+			// 	FOREIGN KEY (conversacion_id) REFERENCES Conversaciones(id),
+			// 	FOREIGN KEY (remitente_id) REFERENCES usuario(id)
+			//   );
+
+			const [chat]: any = await pool.query(
+				'SELECT * FROM conversaciones WHERE (usuario1_id = ? AND usuario2_id = ?) OR (usuario1_id = ? AND usuario2_id = ?)',
+				[decoded.id, id, id, decoded.id],
+			);
+
+			if (chat.length > 0) {
+				await pool.query('DELETE FROM mensajes WHERE conversacion_id = ?', [
+					chat[0].id,
+				]);
+				await pool.query('DELETE FROM conversaciones WHERE id = ?', [
+					chat[0].id,
+				]);
 			}
 			res.status(200).json({
 				result,

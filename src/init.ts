@@ -8,6 +8,7 @@ import matchRoutes from './routes/match.routes';
 import filesRoutes from './routes/files.routes';
 import adminRoutes from './routes/admin.routes';
 import notifyRoutes from './routes/notify.routes';
+import chatRoutes from './routes/chat.routes';
 import cors from 'cors';
 
 const app = express();
@@ -16,16 +17,15 @@ app.use(morgan('dev'));
 
 app.use(express.json());
 
-app.use(cors({origin: '*'}));
+app.use(cors({ origin: '*' }));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
-	res.send("Welcome to networking backend");
+	res.send('Welcome to networking backend');
 });
-
 app.get('/ping', async (req, res) => {
 	const routes: any[] = [];
 	app._router.stack.forEach((middleware) => {
@@ -37,7 +37,6 @@ app.get('/ping', async (req, res) => {
 			});
 		}
 	});
-	
 
 	console.log('Rutas registradas:');
 	routes.forEach((route) => {
@@ -45,9 +44,10 @@ app.get('/ping', async (req, res) => {
 	});
 	res.json(routes);
 });
-app.use('/api/notify', notifyRoutes )
-app.use('/api/admin', adminRoutes )
-app.use('/api/file', filesRoutes )
+app.use('/api/chat', chatRoutes);
+app.use('/api/notify', notifyRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/file', filesRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/match', matchRoutes);
 app.use('/api/mail', mailRoutes);
