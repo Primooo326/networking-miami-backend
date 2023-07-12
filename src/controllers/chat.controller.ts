@@ -81,7 +81,7 @@ export const readChatByIdUser = async (req, res) => {
 		//   );
 		const [results] = await pool.query(
 			'SELECT * FROM usuario_mensajes JOIN Conversaciones ON conversacion_id = Conversaciones.id WHERE (usuario_id_1 = ? AND usuario_id_2 = ?) OR (usuario_id_1 = ? AND usuario_id_2 = ?) ORDER BY fecha_envio ASC',
-			[idUser, idUser2, idUser2, idUser,batchsize],
+			[idUser, idUser2, idUser2, idUser],
 		  );
 		// const [results] = await pool.query(
 		// 	'SELECT * FROM usuario_mensajes WHERE conversacion_id = ? ORDER BY fecha_envio DESC LIMIT ? OFFSET ?',
