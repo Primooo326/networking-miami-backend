@@ -10,7 +10,7 @@ export const readChats = async (req, res) => {
 		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
 		const { id } = decoded;
 		const [results] = await pool.query(
-			'SELECT * FROM Conversaciones WHERE usuario_id_1 = ? OR usuario_id_2 = ?',
+			'SELECT * FROM conversaciones WHERE usuario_id_1 = ? OR usuario_id_2 = ?',
 			[id, id],
 		);
 		res.json(results);
@@ -76,11 +76,11 @@ export const readChatByIdUser = async (req, res) => {
 		const { idUser, idUser2, batchsize, currentbatch } = req.body;
 
 		// const [results] = await pool.query(
-		// 	'SELECT * FROM usuario_mensajes JOIN Conversaciones ON conversacion_id = Conversaciones.id WHERE (usuario_id_1 = ? AND usuario_id_2 = ?) OR (usuario_id_1 = ? AND usuario_id_2 = ?) ORDER BY fecha_envio ASC LIMIT ? OFFSET ?',
+		// 	'SELECT * FROM usuario_mensajes JOIN conversaciones ON conversacion_id = conversaciones.id WHERE (usuario_id_1 = ? AND usuario_id_2 = ?) OR (usuario_id_1 = ? AND usuario_id_2 = ?) ORDER BY fecha_envio ASC LIMIT ? OFFSET ?',
 		// 	[idUser, idUser2, idUser2, idUser,batchsize, currentbatch * batchsize],
 		//   );
 		const [results] = await pool.query(
-			'SELECT * FROM usuario_mensajes JOIN Conversaciones ON conversacion_id = Conversaciones.id WHERE (usuario_id_1 = ? AND usuario_id_2 = ?) OR (usuario_id_1 = ? AND usuario_id_2 = ?) ORDER BY fecha_envio ASC',
+			'SELECT * FROM usuario_mensajes JOIN conversaciones ON conversacion_id = conversaciones.id WHERE (usuario_id_1 = ? AND usuario_id_2 = ?) OR (usuario_id_1 = ? AND usuario_id_2 = ?) ORDER BY fecha_envio ASC',
 			[idUser, idUser2, idUser2, idUser],
 		  );
 		// const [results] = await pool.query(
@@ -88,7 +88,7 @@ export const readChatByIdUser = async (req, res) => {
 		// 	[idUser, batchsize, currentbatch * batchsize],
 		// );
 		const [conversacion_id] = await pool.query(
-			'SELECT `id` FROM Conversaciones WHERE (usuario_id_1 = ? AND usuario_id_2 = ?) OR (usuario_id_1 = ? AND usuario_id_2 = ?)',
+			'SELECT `id` FROM conversaciones WHERE (usuario_id_1 = ? AND usuario_id_2 = ?) OR (usuario_id_1 = ? AND usuario_id_2 = ?)',
 			[idUser, idUser2, idUser2, idUser],
 		)
 		  

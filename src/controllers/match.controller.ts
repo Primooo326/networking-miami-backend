@@ -57,7 +57,7 @@ export const createMatch = async (req, res) => {
 			);
 
 			await pool.query(
-				'INSERT INTO Conversaciones (nombre, usuario_id_1, usuario_id_2) VALUES (?, ?, ?)',
+				'INSERT INTO conversaciones (nombre, usuario_id_1, usuario_id_2) VALUES (?, ?, ?)',
 				['chat', idUser, idToMatch],
 			);
 
@@ -82,7 +82,7 @@ export const createMatch = async (req, res) => {
 		}
 	} catch (error) {
 		console.error('Error during registered:', error);
-		res.status(500).send('registered failed');
+		res.status(500).json();
 	}
 };
 

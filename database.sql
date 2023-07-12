@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS usuarios_conectados (
     FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
-CREATE TABLE Conversaciones (
+CREATE TABLE conversaciones (
   id INT PRIMARY KEY AUTO_INCREMENT,
   nombre VARCHAR(50),
   usuario_id_1 INT,
@@ -101,7 +101,7 @@ CREATE TABLE usuario_mensajes (
   destinatario_id INT,
   contenido VARCHAR(255),
   fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (conversacion_id) REFERENCES Conversaciones(id),
+  FOREIGN KEY (conversacion_id) REFERENCES conversaciones(id),
   FOREIGN KEY (remitente_id) REFERENCES usuario(id),
   FOREIGN KEY (destinatario_id) REFERENCES usuario(id)
 );

@@ -27,6 +27,7 @@ export const getFile = async (req, res) => {
 	try {
 		fs.readFile(
 			path.join(__dirname, `../../images/${req.params.filename}`),
+			// path.join(__dirname, `../images/${req.params.filename}`),
 			(err, data) => {
 				if (err) {
 					console.log(err.message);
