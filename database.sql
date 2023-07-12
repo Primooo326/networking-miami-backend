@@ -100,7 +100,7 @@ CREATE TABLE usuario_mensajes (
   remitente_id INT,
   destinatario_id INT,
   contenido VARCHAR(255),
-  fecha_envio VARCHAR(255),
+  fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (conversacion_id) REFERENCES Conversaciones(id),
   FOREIGN KEY (remitente_id) REFERENCES usuario(id),
   FOREIGN KEY (destinatario_id) REFERENCES usuario(id)
