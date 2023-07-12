@@ -33,27 +33,27 @@ export const createMatch = async (req, res) => {
 
 			const [userData]: any = await pool.query(
 				'SELECT * FROM usuario WHERE id = ?',
-				[idToMatch],
+				[idUser],
 			);
 
 			const [lenguajesData]: any = await pool.query(
 				'SELECT lenguaje FROM usuariolenguajes WHERE usuario_id = ?',
-				[idToMatch],
+				[idUser],
 			);
 
 			const [areaExperienciaData]: any = await pool.query(
 				'SELECT experiencia FROM usuarioareaexperiencia WHERE usuario_id = ?',
-				[idToMatch],
+				[idUser],
 			);
 
 			const [temasInteresData]: any = await pool.query(
 				'SELECT interes FROM usuariotemasinteres WHERE usuario_id = ?',
-				[idToMatch],
+				[idUser],
 			);
 
 			const [tipoConexionData]: any = await pool.query(
 				'SELECT conexion FROM usuariotipoconexion WHERE usuario_id = ?',
-				[idToMatch],
+				[idUser],
 			);
 
 			await pool.query(
@@ -310,23 +310,15 @@ export const deleteMatch = async (req, res) => {
 			if (socketId) {
 				ioSocket.to(socketId).emit('deleteMatch', { id: decoded.id });
 			}
-			// CREATE TABLE usuario_mensajes (
-			// 	id INT PRIMARY KEY AUTO_INCREMENT,
-			// 	conversacion_id INT,
-			// 	remitente_id INT,
-			// 	contenido VARCHAR(255),
-			// 	fecha_envio VARCHAR(255),
-			// 	FOREIGN KEY (conversacion_id) REFERENCES Conversaciones(id),
-			// 	FOREIGN KEY (remitente_id) REFERENCES usuario(id)
-			//   );
+
 
 			const [chat]: any = await pool.query(
-				'SELECT * FROM conversaciones WHERE (usuario1_id = ? AND usuario2_id = ?) OR (usuario1_id = ? AND usuario2_id = ?)',
+				'SELECT * FROM conversaciones WHERE (usuario_id_1 = ? AND usuario_id_2 = ?) OR (usuario_id_1 = ? AND usuario_id_2 = ?)',
 				[decoded.id, id, id, decoded.id],
 			);
 
 			if (chat.length > 0) {
-				await pool.query('DELETE FROM mensajes WHERE conversacion_id = ?', [
+				await pool.query('DELETE FROM usuario_mensajes WHERE conversacion_id = ?', [
 					chat[0].id,
 				]);
 				await pool.query('DELETE FROM conversaciones WHERE id = ?', [

@@ -3,12 +3,15 @@ import configEnv from "../config";
 
 import pool from "../database";
 
-export const verifyToken = async (req, res, next) => {
-  const token = req.headers["x-access-token"];
 
+export const verifyToken = async (req, res, next) => {
+  
   try {
+    const token = req.headers["x-access-token"];
+
     if (token) {
-      const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
+      try {
+        const decoded: any = jwt.verify(token, configEnv.SECRET_KEY)
       console.log(decoded);
       const [results]: any = await pool.query(
         "SELECT * FROM usuario WHERE id = ?",
@@ -20,10 +23,17 @@ export const verifyToken = async (req, res, next) => {
       } else {
         next();
       }
+      } catch (error:any) {
+        // Object.entries(error).forEach(([key, value]) => {
+        //   console.log(`key:${key}: ${value}`);
+        // });
+        res.status(401).send(error.message);
+      }
+      
     } else {
-      return res.status(403).send("no token available");
+      return res.status(404).send("no token available");
     }
-  } catch (error) {
+  } catch (error:any) {
     console.log(error);
     res.status(500).send(error);
   }

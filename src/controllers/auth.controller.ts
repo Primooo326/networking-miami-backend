@@ -191,3 +191,14 @@ export const resetPassword = async (req, res) => {
 		res.status(500).send(fs.readFileSync('views/tokenInvalid.html.html', 'utf8'));
 	}
 };
+// refres token
+export const refreshToken = async (req, res) => {
+	try {
+	  const {id} = req.body;
+	  const token = generateTokenSign({ id: id }, 86400);
+	  res.status(200).json({ token });
+  
+	} catch (error) {
+	  res.status(500).send(error);
+	}
+  }
