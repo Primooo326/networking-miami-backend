@@ -115,13 +115,13 @@ export const verifyTokenChangeEmail = async (req, res) => {
       [newEmail, email]
     );
     if (result.affectedRows > 0) {
-      res.send(fs.readFileSync("views/mailchangesuccess.html", "utf8").replace("{{URL}}", configEnv.URL_FRONT));
+      res.send(fs.readFileSync(`${configEnv.MAIL_PATH}/mailchangesuccess.html`, "utf8").replace("{{URL}}", configEnv.URL_FRONT));
     } else {
       res.status(500).send(result);
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send(fs.readFileSync("views/tokenInvalid.html", "utf8").replace("{{URL}}", configEnv.URL_BACK));
+    res.status(500).send(fs.readFileSync(`${configEnv.MAIL_PATH}/tokenInvalid.html`, "utf8").replace("{{URL}}", configEnv.URL_BACK));
   }
 };
 
@@ -137,12 +137,12 @@ export const verifyTokenVerificationEmail = async (req, res) => {
     );
     if (result.affectedRows > 0) {
       // res.json(result);
-      res.send(fs.readFileSync("views/mailverifyed.html", "utf8").replace("{{URL}}", configEnv.URL_FRONT));
+      res.send(fs.readFileSync(`${configEnv.MAIL_PATH}/mailverifyed.html`, "utf8").replace("{{URL}}", configEnv.URL_FRONT));
     } else {
       res.status(500).send(result);
     }
   } catch (error) {
-    res.status(500).send(fs.readFileSync("views/tokenInvalid.html", "utf8").replace("{{URL}}", configEnv.URL_BACK));
+    res.status(500).send(fs.readFileSync(`${configEnv.MAIL_PATH}/tokenInvalid.html`, "utf8").replace("{{URL}}", configEnv.URL_BACK));
   }
 };
 
@@ -154,12 +154,12 @@ export const resetPasswwordForm = async (req, res) => {
       console.log(decoded);
 
       res.send(
-        fs.readFileSync("views/resetPassword.html", "utf8").replace("{{TOKEN}}", token).replace("{{URL}}", configEnv.URL_BACK)
+        fs.readFileSync(`${configEnv.MAIL_PATH}/resetPassword.html`, "utf8").replace("{{TOKEN}}", token).replace("{{URL}}", configEnv.URL_BACK)
       );
     } else {
       return res.status(403).json({ message: "no token available" });
     }
   } catch (error) {
-    res.status(500).send(fs.readFileSync("views/tokenInvalid.html", "utf8").replace("{{URL}}", configEnv.URL_BACK));
+    res.status(500).send(fs.readFileSync(`${configEnv.MAIL_PATH}/tokenInvalid.html`, "utf8").replace("{{URL}}", configEnv.URL_BACK));
   }
 };

@@ -28,29 +28,30 @@ export async function sendEmail(
   data: any
 ) {
   try {
+
     const mailBuildData = {
-      subject: "Verificacion de correo",
-      htmlContent: fs.readFileSync("views/mailverification.html", "utf8"),
+      subject: "Verificación de correo",
+      htmlContent: fs.readFileSync(`${configEnv.MAIL_PATH}/mailverification.html`, "utf8"),
     };
     if (typeEmail === "verification") {
-      mailBuildData.subject = "Verificacion de correo";
+      mailBuildData.subject = "Verificación de correo";
       mailBuildData.htmlContent = fs
-        .readFileSync("views/mailverification.html", "utf8")
+        .readFileSync(`${configEnv.MAIL_PATH}/mailverification.html`, "utf8")
         .replace("{{TOKEN}}", data).replace("{{URL}}",configEnv.URL_BACK)
     } else if (typeEmail === "changeEmail") {
       mailBuildData.subject = "Cambio de correo";
       mailBuildData.htmlContent = fs
-        .readFileSync("views/mailchange.html", "utf8")
+        .readFileSync(`${configEnv.MAIL_PATH}/mailchange.html`, "utf8")
         .replace("{{TOKEN}}", data).replace("{{URL}}",configEnv.URL_BACK)
     } else if (typeEmail === "invitation") {
-      mailBuildData.subject = "Invitacion";
+      mailBuildData.subject = "Invitación";
       mailBuildData.htmlContent = fs
-        .readFileSync("views/mailinvitation.html", "utf8") 
+        .readFileSync(`${configEnv.MAIL_PATH}/mailinvitation.html`, "utf8") 
         .replace("{{USER}}", data).replace("{{URL}}",configEnv.URL_FRONT)
     } else if (typeEmail === "passwordReset") {
-      mailBuildData.subject = "Recuperacion de contraseña";
+      mailBuildData.subject = "Recuperación de contraseña";
       mailBuildData.htmlContent = fs
-        .readFileSync("views/mailpasswordreset.html", "utf8")
+        .readFileSync(`${configEnv.MAIL_PATH}/mailpasswordreset.html`, "utf8")
         .replace("{{TOKEN}}", data).replace("{{URL}}",configEnv.URL_BACK)
     } else {
       throw new Error("Email type not found");
@@ -77,6 +78,6 @@ export async function sendEmail(
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     return info.messageId;
   } catch (error) {
-    console.log(error);
+    console.log("error::",error);
   }
 }
