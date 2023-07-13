@@ -26,8 +26,7 @@ export const uploadFile = async (req, res) => {
 export const getFile = async (req, res) => {
 	try {
 		fs.readFile(
-			path.join(__dirname, `../../images/${req.params.filename}`),
-			// path.join(__dirname, `../images/${req.params.filename}`),
+			path.join(__dirname, `${configEnv.FILES_PATH}/${req.params.filename}`),
 			(err, data) => {
 				if (err) {
 					console.log(err.message);
