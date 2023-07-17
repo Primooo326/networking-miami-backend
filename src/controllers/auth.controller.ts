@@ -1,7 +1,7 @@
 import pool from '../database';
 import { encrypt, compare, generateTokenSign } from '../tools';
 import { avatars } from '../datasets';
-import configEnv  from '../config';
+import configEnv from '../config';
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
 
@@ -23,7 +23,7 @@ export const login = async (req, res) => {
 
 			if (esSimilar) {
 				console.log(user.id);
-				const token = generateTokenSign({ id: user.id }, 86400);
+				const token = generateTokenSign({ id: user.id }, '7d');
 
 				const [userData]: any = await pool.query(
 					'SELECT * FROM usuario WHERE id = ?',
@@ -93,11 +93,14 @@ export const register = async (req, res) => {
 		lenguajes,
 	} = req.body;
 	if (!avatar) {
-		avatar = "https://networking.miami/media/user-image.png"
+		avatar = 'https://networking.miami/media/user-image.png';
 	}
-	if(!fotoPortada){
-
-		fotoPortada = 'https://img.freepik.com/free-photo/glitch-effect-black-background_53876-129025.jpg?w=740&t=st=1686934648~exp=1686935248~hmac=1ce13f8749d5e2fddc16cfa874fa7ac7b6ac58c88576f7e70527eb6bf08249c3'
+	if (!objetivo) {
+		objetivo = 'No hay objetivo';
+	}
+	if (!fotoPortada) {
+		fotoPortada =
+			'https://img.freepik.com/free-photo/glitch-effect-black-background_53876-129025.jpg?w=740&t=st=1686934648~exp=1686935248~hmac=1ce13f8749d5e2fddc16cfa874fa7ac7b6ac58c88576f7e70527eb6bf08249c3';
 	}
 
 	try {
@@ -183,22 +186,31 @@ export const resetPassword = async (req, res) => {
 			[passwordEncrypted, email],
 		);
 		if (result.affectedRows > 0) {
-			res.send(fs.readFileSync('views/resetPasswordSuccess.html', 'utf8').replace("{{URL}}",configEnv.URL_FRONT));
+			res.send(
+				fs
+					.readFileSync('views/resetPasswordSuccess.html', 'utf8')
+					.replace('{{URL}}', configEnv.URL_FRONT),
+			);
 		} else {
-			res.send(fs.readFileSync('views/resetPasswordSuccess.html', 'utf8').replace("{{URL}}",configEnv.URL_FRONT));
+			res.send(
+				fs
+					.readFileSync('views/resetPasswordSuccess.html', 'utf8')
+					.replace('{{URL}}', configEnv.URL_FRONT),
+			);
 		}
 	} catch (error) {
-		res.status(500).send(fs.readFileSync('views/tokenInvalid.html.html', 'utf8'));
+		res
+			.status(500)
+			.send(fs.readFileSync('views/tokenInvalid.html.html', 'utf8'));
 	}
 };
 // refres token
 export const refreshToken = async (req, res) => {
 	try {
-	  const {id} = req.body;
-	  const token = generateTokenSign({ id: id }, 86400);
-	  res.status(200).json({ token });
-  
+		const { id } = req.body;
+		const token = generateTokenSign({ id: id }, 86400);
+		res.status(200).json({ token });
 	} catch (error) {
-	  res.status(500).send(error);
+		res.status(500).send(error);
 	}
-  }
+};
