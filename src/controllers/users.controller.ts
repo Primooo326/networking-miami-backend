@@ -76,14 +76,15 @@ export const searchUser = async (req, res) => {
 			'SELECT * FROM usuario_contacto WHERE usuario_id = ?',
 			[decoded.id],
 		);
-		const [solicitudes]: any = await pool.query(
-			'SELECT * FROM usuario_solicitudes WHERE contacto_id = ?',
-			[decoded.id],
-		);
-		let ids = results.map((c) => c.contacto_id);
+		// const [solicitudes]: any = await pool.query(
+		// 	'SELECT * FROM usuario_solicitudes WHERE contacto_id = ?',
+		// 	[decoded.id],
+		// );
+		const ids = results.map((c) => c.contacto_id);
 		ids.push(decoded.id);
 
-		ids = [...ids, ...solicitudes.map((s) => s.usuario_id)];
+		
+		// ids = [...ids, ...solicitudes.map((s) => s.usuario_id)];
 		batchsize === undefined ? (batchsize = 50) : (batchsize = batchsize);
 		currentbatch === undefined
 			? (currentbatch = 0)
@@ -94,9 +95,8 @@ export const searchUser = async (req, res) => {
 		} else {
 			console.log(ids.toString());
 			const [rows]: any = await pool.query(
-				'SELECT * FROM usuario WHERE (LOWER(nombre) LIKE ? OR LOWER(email) LIKE ?) AND id NOT IN (?) LIMIT ? OFFSET ?',
+				'SELECT * FROM usuario WHERE (LOWER(nombre) LIKE ?) AND id NOT IN (?) LIMIT ? OFFSET ?',
 				[
-					`%${query}%`,
 					`%${query}%`,
 					ids,
 					Number(batchsize),
