@@ -1,11 +1,11 @@
-import { Router } from "express";
+import { Router } from 'express';
 
-import {readNotify} from "../controllers/notify.controller";
-import { verifyToken } from "../middlewares/authJwt";
+import { readNotify, deleteNotify } from '../controllers/notify.controller';
+import { verifyToken } from '../middlewares/authJwt';
 
 const router = Router();
 
-router.get("/",verifyToken, readNotify);
-
+router.delete('/:id', verifyToken, deleteNotify);
+router.get('/', verifyToken, readNotify);
 
 export default router;

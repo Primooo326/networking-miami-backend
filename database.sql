@@ -100,11 +100,18 @@ CREATE TABLE usuario_mensajes (
   remitente_id INT,
   destinatario_id INT,
   contenido VARCHAR(255),
+  estado ENUM('no_visto', 'visto') DEFAULT 'no_visto',
   fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (conversacion_id) REFERENCES conversaciones(id),
   FOREIGN KEY (remitente_id) REFERENCES usuario(id),
   FOREIGN KEY (destinatario_id) REFERENCES usuario(id)
 );
+ALTER TABLE usuario_mensajes
+ADD estado ENUM('no_visto', 'visto') DEFAULT 'no_visto' AFTER contenido;
+
+UPDATE usuario_mensajes
+SET estado = 'no_visto';
+
 
 CREATE TABLE IF NOT EXISTS areas_experiencia (
 	titulo VARCHAR(255),
