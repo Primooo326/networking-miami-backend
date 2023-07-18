@@ -47,21 +47,20 @@ export const sendMessage = async (req, res) => {
 
 		const { conversacion_id, contenido, remitente_id, destinatario_id } =
 			req.body;
-		await pool.query(
+		const [result]:any = await pool.query(
 			'INSERT INTO usuario_mensajes (conversacion_id, remitente_id,destinatario_id, contenido) VALUES (?, ?, ?, ?)',
 			[conversacion_id, remitente_id, destinatario_id, contenido],
 		);
+		
+		
+		const [data] = await pool.query('SELECT * FROM usuario_mensajes WHERE id = ?',[result.insertId])
+		console.log(data);
+
 		const ioSocket = getSocketInstance();
 		const socketId = await getSocketId(destinatario_id);
 
 		if (socketId) {
-			ioSocket.to(socketId).emit('newMessage', {
-				conversacion_id,
-				contenido,
-				remitente_id,
-				destinatario_id,
-				estado: 'no_visto',
-			});
+			ioSocket.to(socketId).emit('newMessage', data[0]);
 		}
 
 		res.json({ conversacion_id, contenido, remitente_id, destinatario_id });
@@ -76,7 +75,7 @@ export const readChatByIdUser = async (req, res) => {
 		const { idUser, idUser2, batchsize, currentbatch } = req.body;
 
 		const [results] = await pool.query(
-			'SELECT * FROM usuario_mensajes  WHERE (remitente_id = ? AND destinatario_id = ?) OR (remitente_id = ? AND destinatario_id = ?) ORDER BY fecha_envio ASC LIMIT ? OFFSET ?',
+			'SELECT * FROM usuario_mensajes  WHERE (remitente_id = ? AND destinatario_id = ?) OR (remitente_id = ? AND destinatario_id = ?) ORDER BY fecha_envio DESC LIMIT ? OFFSET ?',
 			[idUser, idUser2, idUser2, idUser, batchsize, currentbatch * batchsize],
 		);
 		// const [results] = await pool.query(
