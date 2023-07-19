@@ -34,9 +34,14 @@ export async function sendEmail(
       htmlContent: fs.readFileSync(`${configEnv.MAIL_PATH}/mailverification.html`, "utf8"),
     };
     if (typeEmail === "verification") {
-      mailBuildData.subject = "Verificación de correo";
+      // mailBuildData.subject = "Verificación de correo";
+      // mailBuildData.htmlContent = fs
+      //   .readFileSync(`${configEnv.MAIL_PATH}/mailverification.html`, "utf8")
+      //   .replace("{{TOKEN}}", data).replace("{{URL}}",configEnv.URL_BACK)
+      mailBuildData.subject = "Cambio de correo";
+      console.log("object");
       mailBuildData.htmlContent = fs
-        .readFileSync(`${configEnv.MAIL_PATH}/mailverification.html`, "utf8")
+        .readFileSync(`${configEnv.MAIL_PATH}/mailchange.html`, "utf8")
         .replace("{{TOKEN}}", data).replace("{{URL}}",configEnv.URL_BACK)
     } else if (typeEmail === "changeEmail") {
       mailBuildData.subject = "Cambio de correo";
@@ -62,13 +67,13 @@ export async function sendEmail(
       port: 465,
       secure: true,
       auth: {
-        user: "_mainaccount@networking.miami",
+        user: "noreply@networking.miami",
         pass: "Miami2023$",
       },
     });
 
     const info = await transporter.sendMail({
-      from: '"Networking miami" <_mainaccount@networking.miami>',
+      from: '"Networking miami" <noreply@networking.miami>',
       to: userEmail,
       subject: mailBuildData.subject,
       html: mailBuildData.htmlContent,

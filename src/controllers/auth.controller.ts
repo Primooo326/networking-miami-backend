@@ -159,7 +159,7 @@ export const register = async (req, res) => {
 				);
 			});
 
-			const token = generateTokenSign({ id: rows.insertId }, 86400);
+			const token = generateTokenSign({ id: rows.insertId }, "7d");
 
 			res.status(200).json({
 				token,
