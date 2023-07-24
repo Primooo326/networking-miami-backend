@@ -3,6 +3,8 @@ import pool from '../database';
 import fs from 'fs';
 import configEnv from '../config';
 import jwt from 'jsonwebtoken';
+import { getSocketInstance } from '../socket';
+import { getSocketId } from '../socketHandlers/user.handlers';
 
 export const sendMailVerification = async (req, res) => {
 	try {
@@ -144,20 +146,24 @@ export const verifyTokenVerificationEmail = async (req, res) => {
 		const tokenResponse: any = validToken(token);
 		const { email } = tokenResponse;
 
-		const [result]: any = await pool.query(
+		 await pool.query(
 			'UPDATE usuario SET verificado = ? WHERE email = ?',
 			[true, email],
 		);
-		if (result.affectedRows > 0) {
-			// res.json(result);
-			res.send(
-				fs
-					.readFileSync(`${configEnv.MAIL_PATH}/mailverifyed.html`, 'utf8')
-					.replace('{{URL}}', configEnv.URL_FRONT),
-			);
-		} else {
-			res.status(500).send(result);
-		}
+		const [result]: any = await pool.query('SELECT id FROM usuario WHERE email = ?', [email])
+			const io = getSocketInstance();
+
+			const socketId = await getSocketId(result[0].id);
+			console.log(socketId);
+
+			if (socketId) io.to(socketId).emit('emailverification',1 );
+			res.redirect(configEnv.URL_FRONT);
+			// res.send(
+			// 	fs
+			// 		.readFileSync(`${configEnv.MAIL_PATH}/mailverifyed.html`, 'utf8')
+			// 		.replace('{{URL}}', configEnv.URL_FRONT),
+			// );
+		
 	} catch (error) {
 		res
 			.status(500)

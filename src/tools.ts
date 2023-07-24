@@ -34,14 +34,9 @@ export async function sendEmail(
       htmlContent: fs.readFileSync(`${configEnv.MAIL_PATH}/mailverification.html`, "utf8"),
     };
     if (typeEmail === "verification") {
-      // mailBuildData.subject = "Verificación de correo";
-      // mailBuildData.htmlContent = fs
-      //   .readFileSync(`${configEnv.MAIL_PATH}/mailverification.html`, "utf8")
-      //   .replace("{{TOKEN}}", data).replace("{{URL}}",configEnv.URL_BACK)
-      mailBuildData.subject = "Cambio de correo";
-      console.log("object");
+      mailBuildData.subject = "Verificación de correo";
       mailBuildData.htmlContent = fs
-        .readFileSync(`${configEnv.MAIL_PATH}/mailchange.html`, "utf8")
+        .readFileSync(`${configEnv.MAIL_PATH}/mailverification.html`, "utf8")
         .replace("{{TOKEN}}", data).replace("{{URL}}",configEnv.URL_BACK)
     } else if (typeEmail === "changeEmail") {
       mailBuildData.subject = "Cambio de correo";

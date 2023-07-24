@@ -68,10 +68,44 @@ export const readAllUsers = async (req, res) => {
 };
 
 export const readUserById = async (req, res) => {
-  const [rows]: any = await pool.query("SELECT * FROM usuario WHERE id = ?", [
-    req.body.id,
-  ]);
-  res.json(rows);
+
+  const token = req.headers["x-access-token"];
+  const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
+
+
+  const [userData]: any = await pool.query(
+    'SELECT * FROM usuario WHERE id = ?',
+    [decoded.id],
+  );
+
+  const [lenguajesData]: any = await pool.query(
+    'SELECT lenguaje FROM usuariolenguajes WHERE usuario_id = ?',
+    [decoded.id],
+  );
+
+  const [areaExperienciaData]: any = await pool.query(
+    'SELECT experiencia FROM usuarioareaexperiencia WHERE usuario_id = ?',
+    [decoded.id],
+  );
+
+  const [temasInteresData]: any = await pool.query(
+    'SELECT interes FROM usuariotemasinteres WHERE usuario_id = ?',
+    [decoded.id],
+  );
+
+  const [tipoConexionData]: any = await pool.query(
+    'SELECT conexion FROM usuariotipoconexion WHERE usuario_id = ?',
+    [decoded.id],
+  );
+
+  const userDataWithRelations = {
+    ...userData[0],
+    lenguajes: lenguajesData.map((row) => row.lenguaje),
+    areaExperiencia: areaExperienciaData.map((row) => row.experiencia),
+    temasInteres: temasInteresData.map((row) => row.interes),
+    tipoConexion: tipoConexionData.map((row) => row.conexion),
+  };
+  res.json(userDataWithRelations);
 };
 
 export const searchUser = async (req, res) => {
