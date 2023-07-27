@@ -12,30 +12,25 @@ export interface IUser {
 	avatar: string;
 }
 
-export interface usuario {
-  id: string;
-  nombre: string;
-  email: string;
-  fechaNacimiento: string;
-  verificado: boolean;
-  condado: string;
-  ciudad: string;
-  genero: string;
-  telefono: string;
-  biografia: string;
-  avatar: string;
-  fotoPortada: string;
-  objetivo: string;
-  fechaIngreso: string;
-  temasInteres: { id: string; interes: string }[];
-  areaExperiencia: { id: string; experiencia: string }[];
-  tipoConeccion: { id: string; coneccion: string }[];
-  lenguajes: { id: string; lenguaje: string }[];
-  ocupaciones: { id: string; ocupacion: string }[];
-  redesSociales: usuarioredessociales[];
-  publicaciones: usuariopublicaciones[];
-  contactos: contacto[];
-  chats: chat[];
+export interface Usuario {
+	id: number | string
+	nombre: string
+	email: string
+	fechaNacimiento: string
+	verificado: number
+	condado: string
+	ciudad: string
+	genero: string
+	telefono: string
+	biografia: string
+	avatar: string
+	fotoPortada: string
+	objetivo: string
+	fechaIngreso: string
+	temasInteres: string[]
+	areaExperiencia: string[]
+	tipoConexion: string[]
+	lenguajes: string[]
 }
 
 export interface chat {

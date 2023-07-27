@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS usuariolenguajes (
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
-CREATE TABLE IF NOT EXISTS usuarioredessociales (
+CREATE TABLE IF NOT EXISTS usuario_redes_sociales (
   usuario_id INT,
   red VARCHAR(255),
   link VARCHAR(255),

@@ -1,24 +1,27 @@
 import pool from "../database";
 import jwt from "jsonwebtoken";
 import configEnv from "../config";
+import { Usuario } from '../models/user.models';
 export const readUsers = async (req, res) => {
   try {
+  let { batchsize, currentbatch } = req.query;
+  batchsize === undefined ? (batchsize = 50) : (batchsize = batchsize);
+  currentbatch === undefined
+    ? (currentbatch = 0)
+    : (currentbatch = currentbatch);
     const token = req.headers["x-access-token"];
     const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
     const [results]: any = await pool.query(
       "SELECT * FROM usuario_contacto WHERE usuario_id = ?",
       [decoded.id]
     );
-    // const [solicitudes]: any = await pool.query(
-    //   "SELECT * FROM usuario_solicitudes WHERE contacto_id = ?",
-    //   [decoded.id]
-    // );
     const ids = results.map((c) => c.contacto_id);
     ids.push(decoded.id);
 
     // ids = [...ids, ...solicitudes.map((s) => s.usuario_id)]
     const [rows]: any = await pool.query(
-      `SELECT * FROM usuario WHERE id NOT IN (${ids})`
+      "SELECT * FROM usuario WHERE id NOT IN (?) LIMIT ? OFFSET ?",
+      [ ids, Number(batchsize), currentbatch * batchsize]
     );
     const usuarios: any[] = [];
     for (const user of rows) {
@@ -58,6 +61,37 @@ export const readUsers = async (req, res) => {
   }
 };
 
+export const readSimilarUsers = async (req, res) => {
+  try {
+    const user = req.body; // Asumiendo que req.body contiene el objeto de usuario
+    // Construir la consulta SQL
+    const query = `
+      SELECT DISTINCT u.id, u.nombre, u.email, u.biografia, u.avatar
+      FROM usuario AS u
+      LEFT JOIN usuariotemasinteres AS uti ON u.id = uti.usuario_id
+      LEFT JOIN usuarioareaexperiencia AS uae ON u.id = uae.usuario_id
+      LEFT JOIN usuariolenguajes AS ul ON u.id = ul.usuario_id
+      LEFT JOIN usuariotipoconexion AS utc ON u.id = utc.usuario_id
+      WHERE
+        u.id <> ?
+        AND (uti.interes IN (?)
+        OR uae.experiencia IN (?)
+        OR ul.lenguaje IN (?)
+        OR utc.conexion IN (?))
+    `;
+    // Valores a pasar en la consulta
+    const values = [user.id, user.temasInteres, user.areaExperiencia, user.lenguajes, user.tipoConexion];
+    // Ejecutar la consulta
+    const [usuariosSimilares] = await pool.query(query, values);
+    res.json(usuariosSimilares);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+};
+
+
+
 export const readAllUsers = async (req, res) => {
   try {
     const [results]: any = await pool.query("SELECT * FROM usuario");
@@ -69,33 +103,35 @@ export const readAllUsers = async (req, res) => {
 
 export const readUserById = async (req, res) => {
 
+  const {id} = req.params
+
   const token = req.headers["x-access-token"];
   const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
 
 
   const [userData]: any = await pool.query(
     'SELECT * FROM usuario WHERE id = ?',
-    [decoded.id],
+    [id],
   );
 
   const [lenguajesData]: any = await pool.query(
     'SELECT lenguaje FROM usuariolenguajes WHERE usuario_id = ?',
-    [decoded.id],
+    [id],
   );
 
   const [areaExperienciaData]: any = await pool.query(
     'SELECT experiencia FROM usuarioareaexperiencia WHERE usuario_id = ?',
-    [decoded.id],
+    [id],
   );
 
   const [temasInteresData]: any = await pool.query(
     'SELECT interes FROM usuariotemasinteres WHERE usuario_id = ?',
-    [decoded.id],
+    [id],
   );
 
   const [tipoConexionData]: any = await pool.query(
     'SELECT conexion FROM usuariotipoconexion WHERE usuario_id = ?',
-    [decoded.id],
+    [id],
   );
 
   const userDataWithRelations = {
@@ -119,11 +155,8 @@ export const searchUser = async (req, res) => {
       "SELECT * FROM usuario_contacto WHERE usuario_id = ?",
       [decoded.id]
     );
-    // const [solicitudes]: any = await pool.query(
-    // 	'SELECT * FROM usuario_solicitudes WHERE contacto_id = ?',
-    // 	[decoded.id],
-    // );
-    const ids = results.map((c) => c.contacto_id);
+    const ids:any[] = []
+    // const ids = results.map((c) => c.contacto_id);
     ids.push(decoded.id);
 
     // ids = [...ids, ...solicitudes.map((s) => s.usuario_id)];
