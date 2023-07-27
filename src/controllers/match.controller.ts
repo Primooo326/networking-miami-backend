@@ -124,29 +124,25 @@ export const requestMatch = async (req, res, next) => {
 	}
 };
 
-export const readPendingMatch = async (req, res) => {
+export const readPendingMatches = async (req, res) => {
 	try {
 		const token = req.headers['x-access-token'];
 
-		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
+		const decoded:any = jwt.verify(token, configEnv.SECRET_KEY);
 
-		const [results]: any = await pool.query(
-			'SELECT * FROM usuario_solicitudes WHERE receptor_id = ? AND estado = ?',
+		const [results]:any = await pool.query(
+			'SELECT u.* FROM usuario_solicitudes us JOIN usuario u ON us.solicitante_id = u.id WHERE us.receptor_id = ? AND us.estado = ?',
 			[decoded.id, 'pendiente'],
 		);
-		console.log(results);
+
 		if (results.length === 0) {
 			return res.status(200).json([]);
 		} else {
-			const ids = results.map((c) => ` id = ${c.solicitante_id} `).join(' OR');
-			const [result]: any = await pool.query(
-				`SELECT * FROM usuario WHERE ${ids}`,
-			);
-			res.status(200).json(result);
+			res.status(200).json(results);
 		}
 	} catch (error) {
-		console.error('Error during registered:', error);
-		res.status(500).send('registered failed');
+		console.error('Error during readPendingMatches:', error);
+		res.status(500).send('Failed to fetch pending matches');
 	}
 };
 

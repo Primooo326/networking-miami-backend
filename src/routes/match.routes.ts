@@ -8,7 +8,7 @@ const router = Router();
 router.post('/request', verifyToken, matchControllers.requestMatch, createNotify);
 router.post('/', verifyToken, matchControllers.createMatch);
 router.get('/requestmatches', verifyToken, matchControllers.readMyRequest);
-router.get('/pendingmatches', verifyToken, matchControllers.readPendingMatch);
+router.get('/pendingmatches', verifyToken, matchControllers.readPendingMatches);
 router.get('/:id', verifyToken, matchControllers.readMatch);
 router.delete('/deleteRequestMatch/:id', verifyToken, matchControllers.deleteRequestMatch);
 router.delete('/rejectPendingMatch/:id', verifyToken, matchControllers.rejectPendingMatch);
