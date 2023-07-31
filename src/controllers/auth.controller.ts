@@ -180,23 +180,11 @@ export const resetPassword = async (req, res) => {
 
     const passwordEncrypted = await encrypt(password);
 
-    const [result]: any = await pool.query(
-      "UPDATE usuario SET password = ? WHERE email = ?",
-      [passwordEncrypted, email]
-    );
-    if (result.affectedRows > 0) {
-      res.send(
-        fs
-          .readFileSync("views/resetPasswordSuccess.html", "utf8")
-          .replace("{{URL}}", configEnv.URL_FRONT)
-      );
-    } else {
-      res.send(
-        fs
-          .readFileSync("views/resetPasswordSuccess.html", "utf8")
-          .replace("{{URL}}", configEnv.URL_FRONT)
-      );
-    }
+    await pool.query("UPDATE usuario SET password = ? WHERE email = ?", [
+      passwordEncrypted,
+      email,
+    ]);
+    res.redirect(configEnv.URL_FRONT);
   } catch (error) {
     res
       .status(500)

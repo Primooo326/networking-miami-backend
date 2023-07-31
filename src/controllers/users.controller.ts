@@ -125,8 +125,10 @@ export const readSimilarUsers = async (req, res) => {
     );
     let combinedResults;
     if (similarUsers.length == 0) {
+      console.log("with similars");
       combinedResults = [...pendingResults, ...rows];
     } else {
+      console.log("without similars");
       combinedResults = [...pendingResults, ...similarUsers];
     }
 
