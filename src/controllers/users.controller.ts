@@ -1,7 +1,7 @@
 import pool from "../database";
 import jwt from "jsonwebtoken";
 import configEnv from "../config";
-import { Usuario } from "../models/user.models";
+
 export const readUsers = async (req, res) => {
   try {
     let { batchsize, currentbatch } = req.query;
@@ -26,22 +26,22 @@ export const readUsers = async (req, res) => {
     const usuarios: any[] = [];
     for (const user of rows) {
       const [lenguajesData]: any = await pool.query(
-        "SELECT lenguaje FROM usuariolenguajes WHERE usuario_id = ?",
+        "SELECT lenguaje FROM usuario_lenguajes WHERE usuario_id = ?",
         [user.id]
       );
 
       const [areaExperienciaData]: any = await pool.query(
-        "SELECT experiencia FROM usuarioareaexperiencia WHERE usuario_id = ?",
+        "SELECT experiencia FROM usuario_experiencia WHERE usuario_id = ?",
         [user.id]
       );
 
       const [temasInteresData]: any = await pool.query(
-        "SELECT interes FROM usuariotemasinteres WHERE usuario_id = ?",
+        "SELECT interes FROM usuario_intereses WHERE usuario_id = ?",
         [user.id]
       );
 
       const [tipoConexionData]: any = await pool.query(
-        "SELECT conexion FROM usuariotipoconexion WHERE usuario_id = ?",
+        "SELECT conexion FROM usuario_conexion WHERE usuario_id = ?",
         [user.id]
       );
 
@@ -65,49 +65,75 @@ export const readSimilarUsers = async (req, res) => {
   try {
     const user = req.body;
 
-    // Obtener los id de los usuarios con solicitudes pendientes
+    // Validate input data (you may customize these checks based on your data requirements)
+    if (
+      !user.id ||
+      !user.temasInteres ||
+      !user.areaExperiencia ||
+      !user.lenguajes ||
+      !user.tipoConexion
+    ) {
+      return res.status(400).json({ error: "Invalid input data" });
+    }
 
-    // Consulta para obtener usuarios similares basados en intereses, experiencia, lenguajes y tipo de conexión
+    const [results]: any = await pool.query(
+      "SELECT DISTINCT contacto_id FROM usuario_contacto WHERE usuario_id = ?",
+      [user.id]
+    );
+    let ids1 = results.map((data) => data.contacto_id);
+    if (results.length == 0) ids1 = [];
+    ids1.push(user.id);
+
+    console.log(ids1);
+
     const similarUsersQuery = `
-      SELECT DISTINCT u.id, u.nombre, u.email, u.biografia, u.avatar
+      SELECT DISTINCT u.id, u.nombre, u.email, u.biografia, u.avatar, u.verificado
       FROM usuario AS u
-      LEFT JOIN usuariotemasinteres AS uti ON u.id = uti.usuario_id
-      LEFT JOIN usuarioareaexperiencia AS uae ON u.id = uae.usuario_id
-      LEFT JOIN usuariolenguajes AS ul ON u.id = ul.usuario_id
-      LEFT JOIN usuariotipoconexion AS utc ON u.id = utc.usuario_id
-      WHERE
-        u.id <> ? 
-        AND (uti.interes IN (?) OR uae.experiencia IN (?) OR ul.lenguaje IN (?) OR utc.conexion IN (?))
+      LEFT JOIN usuario_intereses AS uti ON u.id = uti.usuario_id
+      LEFT JOIN usuario_experiencia AS uae ON u.id = uae.usuario_id
+      LEFT JOIN usuario_lenguajes AS ul ON u.id = ul.usuario_id
+      LEFT JOIN usuario_conexion AS utc ON u.id = utc.usuario_id
+      WHERE u.id NOT IN (?) 
+      AND (uti.interes IN (?) OR uae.experiencia IN (?) OR ul.lenguaje IN (?) OR utc.conexion IN (?))
     `;
+
     const values = [
-      user.id,
+      ids1,
       user.temasInteres,
       user.areaExperiencia,
       user.lenguajes,
       user.tipoConexion,
     ];
+
     const [similarUsers]: any = await pool.query(similarUsersQuery, values);
 
     const ids = similarUsers.map((userPending) => userPending.id);
 
-    // Consulta para obtener usuarios con solicitudes pendientes
     const pendingRequestsQuery = `
-        SELECT u.* FROM usuario_solicitudes us 
-        JOIN usuario u ON us.solicitante_id = u.id 
-        WHERE us.receptor_id = ? AND us.estado = 'pendiente' AND us.solicitante_id NOT IN (?)
-      `;
+      SELECT u.* FROM usuario_solicitudes us 
+      JOIN usuario u ON us.solicitante_id = u.id 
+      WHERE us.receptor_id = ? AND us.estado = 'pendiente' AND us.solicitante_id NOT IN (?)
+    `;
+
     const [pendingResults]: any = await pool.query(pendingRequestsQuery, [
       user.id,
-      ids
+      ids,
     ]);
-
-    // Combinar los resultados de usuarios similares y solicitudes pendientes
-    const combinedResults = [...pendingResults, ...similarUsers];
+    const [rows]: any = await pool.query(
+      "SELECT * FROM usuario WHERE id NOT IN (?) LIMIT ? OFFSET ?",
+      [ids, Number(50), 0 * 50]
+    );
+    let combinedResults;
+    if (similarUsers.length == 0) {
+      combinedResults = [...pendingResults, ...rows];
+    } else {
+      combinedResults = [...pendingResults, ...similarUsers];
+    }
 
     res.json(combinedResults);
   } catch (error) {
     console.error(error);
-    res.status(500).send(error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -125,29 +151,27 @@ export const readUserById = async (req, res) => {
 
   const token = req.headers["x-access-token"];
   const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
-
   const [userData]: any = await pool.query(
     "SELECT * FROM usuario WHERE id = ?",
     [id]
   );
-
   const [lenguajesData]: any = await pool.query(
-    "SELECT lenguaje FROM usuariolenguajes WHERE usuario_id = ?",
+    "SELECT lenguaje FROM usuario_lenguajes WHERE usuario_id = ?",
     [id]
   );
 
   const [areaExperienciaData]: any = await pool.query(
-    "SELECT experiencia FROM usuarioareaexperiencia WHERE usuario_id = ?",
+    "SELECT experiencia FROM usuario_experiencia WHERE usuario_id = ?",
     [id]
   );
 
   const [temasInteresData]: any = await pool.query(
-    "SELECT interes FROM usuariotemasinteres WHERE usuario_id = ?",
+    "SELECT interes FROM usuario_intereses WHERE usuario_id = ?",
     [id]
   );
 
   const [tipoConexionData]: any = await pool.query(
-    "SELECT conexion FROM usuariotipoconexion WHERE usuario_id = ?",
+    "SELECT conexion FROM usuario_conexion WHERE usuario_id = ?",
     [id]
   );
 
@@ -193,22 +217,22 @@ export const searchUser = async (req, res) => {
       const usuarios: any[] = [];
       for (const user of rows) {
         const [lenguajesData]: any = await pool.query(
-          "SELECT lenguaje FROM usuariolenguajes WHERE usuario_id = ?",
+          "SELECT lenguaje FROM usuario_lenguajes WHERE usuario_id = ?",
           [user.id]
         );
 
         const [areaExperienciaData]: any = await pool.query(
-          "SELECT experiencia FROM usuarioareaexperiencia WHERE usuario_id = ?",
+          "SELECT experiencia FROM usuario_experiencia WHERE usuario_id = ?",
           [user.id]
         );
 
         const [temasInteresData]: any = await pool.query(
-          "SELECT interes FROM usuariotemasinteres WHERE usuario_id = ?",
+          "SELECT interes FROM usuario_intereses WHERE usuario_id = ?",
           [user.id]
         );
 
         const [tipoConexionData]: any = await pool.query(
-          "SELECT conexion FROM usuariotipoconexion WHERE usuario_id = ?",
+          "SELECT conexion FROM usuario_conexion WHERE usuario_id = ?",
           [user.id]
         );
 
@@ -241,26 +265,26 @@ export const searchUserByParameters3 = async (req, res) => {
     } = req.body;
 
     let initQuery =
-      "SELECT usuario.*, usuariolenguajes.lenguaje, usuariotipoconexion.conexion, usuarioareaexperiencia.experiencia FROM usuario JOIN usuariolenguajes ON usuario.id = usuariolenguajes.usuario_id JOIN usuariotipoconexion ON usuario.id = usuariotipoconexion.usuario_id JOIN usuarioareaexperiencia ON usuario.id = usuarioareaexperiencia.usuario_id";
+      "SELECT usuario.*, usuario_lenguajes.lenguaje, usuario_conexion.conexion, usuario_experiencia.experiencia FROM usuario JOIN usuario_lenguajes ON usuario.id = usuario_lenguajes.usuario_id JOIN usuario_conexion ON usuario.id = usuario_conexion.usuario_id JOIN usuario_experiencia ON usuario.id = usuario_experiencia.usuario_id";
 
     const variablesQuery: any = [];
 
     if (idiomas) {
       initQuery.includes("WHERE")
-        ? (initQuery += " AND usuariolenguajes.lenguaje IN (?)")
-        : (initQuery += " WHERE usuariolenguajes.lenguaje IN (?)");
+        ? (initQuery += " AND usuario_lenguajes.lenguaje IN (?)")
+        : (initQuery += " WHERE usuario_lenguajes.lenguaje IN (?)");
       variablesQuery.push(idiomas);
     }
     if (conexiones) {
       initQuery.includes("WHERE")
-        ? (initQuery += " AND usuariotipoconexion.conexion IN (?)")
-        : (initQuery += " WHERE usuariotipoconexion.conexion IN (?)");
+        ? (initQuery += " AND usuario_conexion.conexion IN (?)")
+        : (initQuery += " WHERE usuario_conexion.conexion IN (?)");
       variablesQuery.push(conexiones);
     }
     if (experiencia) {
       initQuery.includes("WHERE")
-        ? (initQuery += " AND usuarioareaexperiencia.experiencia IN (?)")
-        : (initQuery += " WHERE usuarioareaexperiencia.experiencia IN (?)");
+        ? (initQuery += " AND usuario_experiencia.experiencia IN (?)")
+        : (initQuery += " WHERE usuario_experiencia.experiencia IN (?)");
       variablesQuery.push(experiencia);
     }
     if (condado) {
@@ -295,22 +319,22 @@ export const searchUserByParameters3 = async (req, res) => {
     const usuarios: any[] = [];
     for (const user of rows) {
       const [lenguajesData]: any = await pool.query(
-        "SELECT lenguaje FROM usuariolenguajes WHERE usuario_id = ?",
+        "SELECT lenguaje FROM usuario_lenguajes WHERE usuario_id = ?",
         [user.id]
       );
 
       const [areaExperienciaData]: any = await pool.query(
-        "SELECT experiencia FROM usuarioareaexperiencia WHERE usuario_id = ?",
+        "SELECT experiencia FROM usuario_experiencia WHERE usuario_id = ?",
         [user.id]
       );
 
       const [temasInteresData]: any = await pool.query(
-        "SELECT interes FROM usuariotemasinteres WHERE usuario_id = ?",
+        "SELECT interes FROM usuario_intereses WHERE usuario_id = ?",
         [user.id]
       );
 
       const [tipoConexionData]: any = await pool.query(
-        "SELECT conexion FROM usuariotipoconexion WHERE usuario_id = ?",
+        "SELECT conexion FROM usuario_conexion WHERE usuario_id = ?",
         [user.id]
       );
 
@@ -383,40 +407,39 @@ export const updateUserById = async (req, res) => {
           id,
         ]
       );
-      await pool.query("DELETE FROM usuariolenguajes WHERE usuario_id = ?", [
+      await pool.query("DELETE FROM usuario_lenguajes WHERE usuario_id = ?", [
         id,
       ]);
       lenguajes.forEach(async (lenguaje) => {
         await pool.query(
-          "INSERT INTO usuariolenguajes (usuario_id,lenguaje) VALUES (?, ?)",
+          "INSERT INTO usuario_lenguajes (usuario_id,lenguaje) VALUES (?, ?)",
           [id, lenguaje]
         );
       });
-      await pool.query("DELETE FROM usuariotemasinteres WHERE usuario_id = ?", [
+      await pool.query("DELETE FROM usuario_intereses WHERE usuario_id = ?", [
         id,
       ]);
       temasInteres.forEach(async (interes) => {
         await pool.query(
-          "INSERT INTO usuariotemasinteres (usuario_id,interes) VALUES (?, ?)",
+          "INSERT INTO usuario_intereses (usuario_id,interes) VALUES (?, ?)",
           [id, interes]
         );
       });
-      await pool.query("DELETE FROM usuariotipoconexion WHERE usuario_id = ?", [
+      await pool.query("DELETE FROM usuario_conexion WHERE usuario_id = ?", [
         id,
       ]);
       tipoConexion.forEach(async (conexion) => {
         await pool.query(
-          "INSERT INTO usuariotipoconexion (usuario_id,conexion) VALUES (?, ?)",
+          "INSERT INTO usuario_conexion (usuario_id,conexion) VALUES (?, ?)",
           [id, conexion]
         );
       });
-      await pool.query(
-        "DELETE FROM usuarioareaexperiencia WHERE usuario_id = ?",
-        [id]
-      );
+      await pool.query("DELETE FROM usuario_experiencia WHERE usuario_id = ?", [
+        id,
+      ]);
       areaExperiencia.forEach(async (experiencia) => {
         await pool.query(
-          "INSERT INTO usuarioareaexperiencia (usuario_id,experiencia) VALUES (?, ?)",
+          "INSERT INTO usuario_experiencia (usuario_id,experiencia) VALUES (?, ?)",
           [id, experiencia]
         );
       });

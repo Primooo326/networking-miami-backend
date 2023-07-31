@@ -15,47 +15,38 @@ CREATE TABLE IF NOT EXISTS usuario (
   objetivo TEXT,
   fechaIngreso VARCHAR(255)
 );
-
-CREATE TABLE IF NOT EXISTS usuariotemasinteres (
+CREATE TABLE IF NOT EXISTS usuario_intereses (
   usuario_id INT,
   interes VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
-
-CREATE TABLE IF NOT EXISTS usuarioareaexperiencia (
+CREATE TABLE IF NOT EXISTS usuario_experiencia (
   usuario_id INT,
   experiencia VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
-
-CREATE TABLE IF NOT EXISTS usuariotipoconexion (
+CREATE TABLE IF NOT EXISTS usuario_conexion (
   usuario_id INT,
   conexion VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
-
-CREATE TABLE IF NOT EXISTS usuariolenguajes (
+CREATE TABLE IF NOT EXISTS usuario_lenguajes (
   usuario_id INT,
   lenguaje VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
-
 CREATE TABLE IF NOT EXISTS usuario_redes_sociales (
   usuario_id INT,
   red VARCHAR(255),
   link VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
-
-
 CREATE TABLE IF NOT EXISTS usuario_contacto (
-  
   usuario_id INT,
   contacto_id INT,
-    FOREIGN KEY (usuario_id) REFERENCES usuario(id),
-    FOREIGN KEY (contacto_id) REFERENCES usuario(id)
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id),
+  FOREIGN KEY (contacto_id) REFERENCES usuario(id)
 );
-
 CREATE TABLE IF NOT EXISTS usuario_solicitudes (
   id INT PRIMARY KEY AUTO_INCREMENT,
   solicitante_id INT,
@@ -76,16 +67,14 @@ CREATE TABLE IF NOT EXISTS usuario_notificaciones (
   type VARCHAR(255),
   FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
-
 CREATE TABLE IF NOT EXISTS usuarios_conectados (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    socket_id VARCHAR(255) NOT NULL,
-    usuario_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  socket_id VARCHAR(255) NOT NULL,
+  usuario_id INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
-
-CREATE TABLE conversaciones (
+CREATE TABLE usuario_conversaciones (
   id INT PRIMARY KEY AUTO_INCREMENT,
   nombre VARCHAR(50),
   usuario_id_1 INT,
@@ -93,7 +82,6 @@ CREATE TABLE conversaciones (
   FOREIGN KEY (usuario_id_1) REFERENCES usuario(id),
   FOREIGN KEY (usuario_id_2) REFERENCES usuario(id)
 );
-
 CREATE TABLE usuario_mensajes (
   id INT PRIMARY KEY AUTO_INCREMENT,
   conversacion_id INT,
@@ -102,33 +90,14 @@ CREATE TABLE usuario_mensajes (
   contenido VARCHAR(255),
   estado ENUM('no_visto', 'visto') DEFAULT 'no_visto',
   fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (conversacion_id) REFERENCES conversaciones(id),
+  FOREIGN KEY (conversacion_id) REFERENCES usuario_conversaciones(id),
   FOREIGN KEY (remitente_id) REFERENCES usuario(id),
   FOREIGN KEY (destinatario_id) REFERENCES usuario(id)
 );
-ALTER TABLE usuario_mensajes
-ADD estado ENUM('no_visto', 'visto') DEFAULT 'no_visto' AFTER contenido;
-
-UPDATE usuario_mensajes
-SET estado = 'no_visto';
-
-
-CREATE TABLE IF NOT EXISTS areas_experiencia (
-	titulo VARCHAR(255),
-    descripcion TEXT
-);
-CREATE TABLE IF NOT EXISTS areas_intereses (
-	interes VARCHAR(255)
-);
-CREATE TABLE IF NOT EXISTS conexiones (
-	conexion VARCHAR(255)
-);
-
-
-CREATE TABLE IF NOT EXISTS lenguajes (
-	lenguaje VARCHAR(255)
-);
-
+CREATE TABLE IF NOT EXISTS areas_experiencia (titulo VARCHAR(255), descripcion TEXT);
+CREATE TABLE IF NOT EXISTS areas_intereses (interes VARCHAR(255));
+CREATE TABLE IF NOT EXISTS conexiones (conexion VARCHAR(255));
+CREATE TABLE IF NOT EXISTS lenguajes (lenguaje VARCHAR(255));
 CREATE TABLE IF NOT EXISTS condados (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(255)
