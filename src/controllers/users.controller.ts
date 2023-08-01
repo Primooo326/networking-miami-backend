@@ -150,41 +150,43 @@ export const readAllUsers = async (req, res) => {
 
 export const readUserById = async (req, res) => {
   const { id } = req.params;
-
-  const token = req.headers["x-access-token"];
-  const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
   const [userData]: any = await pool.query(
     "SELECT * FROM usuario WHERE id = ?",
     [id]
   );
-  const [lenguajesData]: any = await pool.query(
-    "SELECT lenguaje FROM usuario_lenguajes WHERE usuario_id = ?",
-    [id]
-  );
+  console.log("userData::", userData);
+  if (userData.length > 0) {
+    const [lenguajesData]: any = await pool.query(
+      "SELECT lenguaje FROM usuario_lenguajes WHERE usuario_id = ?",
+      [id]
+    );
 
-  const [areaExperienciaData]: any = await pool.query(
-    "SELECT experiencia FROM usuario_experiencia WHERE usuario_id = ?",
-    [id]
-  );
+    const [areaExperienciaData]: any = await pool.query(
+      "SELECT experiencia FROM usuario_experiencia WHERE usuario_id = ?",
+      [id]
+    );
 
-  const [temasInteresData]: any = await pool.query(
-    "SELECT interes FROM usuario_intereses WHERE usuario_id = ?",
-    [id]
-  );
+    const [temasInteresData]: any = await pool.query(
+      "SELECT interes FROM usuario_intereses WHERE usuario_id = ?",
+      [id]
+    );
 
-  const [tipoConexionData]: any = await pool.query(
-    "SELECT conexion FROM usuario_conexion WHERE usuario_id = ?",
-    [id]
-  );
+    const [tipoConexionData]: any = await pool.query(
+      "SELECT conexion FROM usuario_conexion WHERE usuario_id = ?",
+      [id]
+    );
 
-  const userDataWithRelations = {
-    ...userData[0],
-    lenguajes: lenguajesData.map((row) => row.lenguaje),
-    areaExperiencia: areaExperienciaData.map((row) => row.experiencia),
-    temasInteres: temasInteresData.map((row) => row.interes),
-    tipoConexion: tipoConexionData.map((row) => row.conexion),
-  };
-  res.json(userDataWithRelations);
+    const userDataWithRelations = {
+      ...userData[0],
+      lenguajes: lenguajesData.map((row) => row.lenguaje),
+      areaExperiencia: areaExperienciaData.map((row) => row.experiencia),
+      temasInteres: temasInteresData.map((row) => row.interes),
+      tipoConexion: tipoConexionData.map((row) => row.conexion),
+    };
+    res.json(userDataWithRelations);
+  } else {
+    res.status(404).send("Usuario no encontrado");
+  }
 };
 
 export const searchUser = async (req, res) => {

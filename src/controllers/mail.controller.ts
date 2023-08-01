@@ -106,6 +106,115 @@ export const sendMailChangeMail = async (req, res) => {
     res.status(500).send(error);
   }
 };
+export const sendMailNewContact = async (req, res) => {
+  try {
+    const { solicitante, receptor } = req.body;
+    const token = generateTokenSign({ solicitante, receptor });
+
+    const mail = await sendEmail(receptor.email, "newContact", {
+      solicitante,
+      token,
+    });
+    res.json({ mail });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+export const verifyTokenNewContact = async (req, res) => {
+  try {
+    const token = req.params.token;
+    const tokenResponse: any = validToken(token);
+    const { solicitante, receptor } = tokenResponse;
+    console.log("solicitante:::", solicitante);
+    console.log("receptor:::", receptor);
+    const idUser = solicitante.id;
+    const idToMatch = receptor.id;
+    const [results]: any = await pool.query(
+      "SELECT * FROM usuario_contacto WHERE usuario_id = ? AND contacto_id = ?",
+      [idUser, idToMatch]
+    );
+
+    if (results.length === 0) {
+      await pool.query(
+        "INSERT INTO usuario_contacto (usuario_id,contacto_id) VALUES (?, ?)",
+        [idUser, idToMatch]
+      );
+      await pool.query(
+        "INSERT INTO usuario_contacto (usuario_id,contacto_id) VALUES (?, ?)",
+        [idToMatch, idUser]
+      );
+      await pool.query(
+        "DELETE FROM usuario_solicitudes WHERE solicitante_id = ? AND receptor_id = ?",
+        [idUser, idToMatch]
+      );
+      await pool.query(
+        "DELETE FROM usuario_notificaciones WHERE usuario_id = ?",
+        [idToMatch]
+      );
+      await pool.query(
+        "INSERT INTO usuario_conversaciones (nombre, usuario_id_1, usuario_id_2) VALUES (?, ?, ?)",
+        ["chat", idUser, idToMatch]
+      );
+      const socketId = await getSocketId(idToMatch);
+      const socketIdSolicitante = await getSocketId(idUser);
+      const ioSocket = getSocketInstance();
+
+      if (socketIdSolicitante) {
+        const [userData]: any = await pool.query(
+          "SELECT * FROM usuario WHERE id = ?",
+          [idToMatch]
+        );
+
+        const [lenguajesData]: any = await pool.query(
+          "SELECT lenguaje FROM usuario_lenguajes WHERE usuario_id = ?",
+          [idToMatch]
+        );
+
+        const [areaExperienciaData]: any = await pool.query(
+          "SELECT experiencia FROM usuario_experiencia WHERE usuario_id = ?",
+          [idToMatch]
+        );
+
+        const [temasInteresData]: any = await pool.query(
+          "SELECT interes FROM usuario_intereses WHERE usuario_id = ?",
+          [idToMatch]
+        );
+
+        const [tipoConexionData]: any = await pool.query(
+          "SELECT conexion FROM usuario_conexion WHERE usuario_id = ?",
+          [idToMatch]
+        );
+
+        const userDataWithRelations = {
+          ...userData[0],
+          lenguajes: lenguajesData.map((row) => row.lenguaje),
+          areaExperiencia: areaExperienciaData.map((row) => row.experiencia),
+          temasInteres: temasInteresData.map((row) => row.interes),
+          tipoConexion: tipoConexionData.map((row) => row.conexion),
+        };
+        ioSocket
+          .to(socketIdSolicitante)
+          .emit("newMatch", userDataWithRelations);
+      }
+
+      if (socketId) {
+        ioSocket.to(socketId).emit("newMatch", solicitante);
+      }
+      res.redirect(configEnv.URL_FRONT + "user/" + solicitante.id);
+    } else {
+      res.status(500).send("Match ya existe");
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .send(
+        fs
+          .readFileSync(`${configEnv.MAIL_PATH}/tokenInvalid.html`, "utf8")
+          .replace("{{URL}}", configEnv.URL_BACK)
+      );
+  }
+};
 
 export const verifyTokenChangeEmail = async (req, res) => {
   try {

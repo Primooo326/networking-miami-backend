@@ -31,47 +31,46 @@ export const createMatch = async (req, res) => {
       );
       const socketId = await getSocketId(idToMatch);
 
-      const [userData]: any = await pool.query(
-        "SELECT * FROM usuario WHERE id = ?",
-        [idUser]
-      );
-
-      const [lenguajesData]: any = await pool.query(
-        "SELECT lenguaje FROM usuario_lenguajes WHERE usuario_id = ?",
-        [idUser]
-      );
-
-      const [areaExperienciaData]: any = await pool.query(
-        "SELECT experiencia FROM usuario_experiencia WHERE usuario_id = ?",
-        [idUser]
-      );
-
-      const [temasInteresData]: any = await pool.query(
-        "SELECT interes FROM usuario_intereses WHERE usuario_id = ?",
-        [idUser]
-      );
-
-      const [tipoConexionData]: any = await pool.query(
-        "SELECT conexion FROM usuario_conexion WHERE usuario_id = ?",
-        [idUser]
-      );
-
-      await pool.query(
-        "INSERT INTO usuario_conversaciones (nombre, usuario_id_1, usuario_id_2) VALUES (?, ?, ?)",
-        ["chat", idUser, idToMatch]
-      );
-
-      const userDataWithRelations = {
-        ...userData[0],
-        lenguajes: lenguajesData.map((row) => row.lenguaje),
-        areaExperiencia: areaExperienciaData.map((row) => row.experiencia),
-        temasInteres: temasInteresData.map((row) => row.interes),
-        tipoConexion: tipoConexionData.map((row) => row.conexion),
-      };
-
-      const ioSocket = getSocketInstance();
-
       if (socketId) {
+        const [userData]: any = await pool.query(
+          "SELECT * FROM usuario WHERE id = ?",
+          [idUser]
+        );
+
+        const [lenguajesData]: any = await pool.query(
+          "SELECT lenguaje FROM usuario_lenguajes WHERE usuario_id = ?",
+          [idUser]
+        );
+
+        const [areaExperienciaData]: any = await pool.query(
+          "SELECT experiencia FROM usuario_experiencia WHERE usuario_id = ?",
+          [idUser]
+        );
+
+        const [temasInteresData]: any = await pool.query(
+          "SELECT interes FROM usuario_intereses WHERE usuario_id = ?",
+          [idUser]
+        );
+
+        const [tipoConexionData]: any = await pool.query(
+          "SELECT conexion FROM usuario_conexion WHERE usuario_id = ?",
+          [idUser]
+        );
+
+        await pool.query(
+          "INSERT INTO usuario_conversaciones (nombre, usuario_id_1, usuario_id_2) VALUES (?, ?, ?)",
+          ["chat", idUser, idToMatch]
+        );
+
+        const userDataWithRelations = {
+          ...userData[0],
+          lenguajes: lenguajesData.map((row) => row.lenguaje),
+          areaExperiencia: areaExperienciaData.map((row) => row.experiencia),
+          temasInteres: temasInteresData.map((row) => row.interes),
+          tipoConexion: tipoConexionData.map((row) => row.conexion),
+        };
+
+        const ioSocket = getSocketInstance();
         ioSocket.to(socketId).emit("newMatch", userDataWithRelations);
       }
       res.status(200).json({
