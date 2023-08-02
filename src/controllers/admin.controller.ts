@@ -14,9 +14,6 @@ export const create_area_experiencia = async (req, res) => {
     } catch (error) {
         res.send(error)
     }
-
-
-
 };
 export const read_area_experiencia = async (req, res) => {
 

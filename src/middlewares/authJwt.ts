@@ -24,9 +24,7 @@ export const verifyToken = async (req, res, next) => {
         next();
       }
       } catch (error:any) {
-        // Object.entries(error).forEach(([key, value]) => {
-        //   console.log(`key:${key}: ${value}`);
-        // });
+        console.log(error);
         res.status(401).send(error.message);
       }
       

@@ -7,7 +7,7 @@ import { verifyToken } from "../middlewares/authJwt";
 
 
 const router = Router();
-const storage = multer.diskStorage({
+const storageAvatar = multer.diskStorage({
   destination: "./images",
   filename: function (req, file, cb) {
     
@@ -20,9 +20,31 @@ const storage = multer.diskStorage({
       );
   },
 });
+const storagePortada = multer.diskStorage({
+  destination: "./images",
+  filename: function (req, file, cb) {
 
-const upload = multer({ storage: storage });
+    if(file){
+
+      if (!fs.existsSync("images")) {
+        fs.mkdirSync("images");
+      }
+        cb(
+          null,
+          `portada-${Date.now()}${path.extname(file.originalname)}`
+          );
+      }else {
+        console.log("No se ha seleccionado ninguna imagen");
+        throw new Error("No se ha seleccionado ninguna imagen");
+      }
+    }
+    
+});
+
+const uploadAvatar = multer({ storage: storageAvatar });
+const uploadPortada = multer({ storage: storagePortada });
 router.get("/:filename", filesControllers.getFile);
-router.post("/",verifyToken , upload.single("imagen"), filesControllers.uploadFile);
+router.post("/avatar",verifyToken , uploadAvatar.single("imagen"), filesControllers.uploadFileAvatar);
+router.post("/portada",verifyToken , uploadPortada.single("imagen"), filesControllers.uploadFilePortada);
 
 export default router;

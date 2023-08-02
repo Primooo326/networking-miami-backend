@@ -99,7 +99,7 @@ export const register = async (req, res) => {
   }
   if (!fotoPortada) {
     fotoPortada =
-      "https://img.freepik.com/free-photo/glitch-effect-black-background_53876-129025.jpg?w=740&t=st=1686934648~exp=1686935248~hmac=1ce13f8749d5e2fddc16cfa874fa7ac7b6ac58c88576f7e70527eb6bf08249c3";
+      "https://networking.miami/media/banner/backgroundUser.svg";
   }
 
   try {
