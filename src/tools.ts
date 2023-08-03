@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken';
 import configEnv from './config';
 import nodemailer from 'nodemailer';
 import fs from 'fs';
-import Compressor from 'compressorjs';
+const imagemin = require('imagemin');
+const imageminMozjpeg = require('imagemin-mozjpeg');
 
 export async function encrypt(data: string) {
 	const salt = await bcrypt.genSalt(11);
@@ -106,21 +107,14 @@ export async function sendEmail(
 	}
 }
 
-export async function compressImage(file: any) {
-	try {
-		if (file) {
-			const compressedFile = await new Promise<File>((resolve, reject) => {
-				new Compressor(file, {
-					quality: 0.6,
-					success(result: File) {
-						resolve(result);
-					},
-				});
-			});
-			console.log('compressedFile:::', compressedFile);
-			return compressedFile;
-		}
-	} catch (error) {
-		console.log(error);
-	}
+export async function compressImage(filepath: string) {
+	const files = await imagemin([filepath], {
+		destination: 'images',
+		plugins: [
+			imageminMozjpeg({
+				quality: 50,
+			}),
+		],
+	});
+	return files[0].destinationPath;
 }

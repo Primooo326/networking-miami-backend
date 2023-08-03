@@ -3,10 +3,13 @@ import configEnv from '../config';
 import fs from 'fs';
 import pool from '../database';
 import jwt from 'jsonwebtoken';
-
+import { compressImage } from '../tools';
 export const uploadFileAvatar = async (req, res) => {
 	const token = req.headers['x-access-token'];
 	try {
+		console.log(req.file);
+		compressImage(req.file.path);
+		console.log(req.file);
 		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
 		const [result]: any = await pool.query(
 			'UPDATE usuario SET avatar = ? WHERE id = ?',
