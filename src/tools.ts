@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import configEnv from './config';
 import nodemailer from 'nodemailer';
 import fs from 'fs';
+import Compressor from 'compressorjs';
 
 export async function encrypt(data: string) {
 	const salt = await bcrypt.genSalt(11);
@@ -102,5 +103,24 @@ export async function sendEmail(
 		return info.messageId;
 	} catch (error) {
 		console.log('error::', error);
+	}
+}
+
+export async function compressImage(file: any) {
+	try {
+		if (file) {
+			const compressedFile = await new Promise<File>((resolve, reject) => {
+				new Compressor(file, {
+					quality: 0.6,
+					success(result: File) {
+						resolve(result);
+					},
+				});
+			});
+			console.log('compressedFile:::', compressedFile);
+			return compressedFile;
+		}
+	} catch (error) {
+		console.log(error);
 	}
 }
