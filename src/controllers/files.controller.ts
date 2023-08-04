@@ -3,14 +3,31 @@ import configEnv from '../config';
 import fs from 'fs';
 import pool from '../database';
 import jwt from 'jsonwebtoken';
-import { compressImage } from '../tools';
 export const uploadFileAvatar = async (req, res) => {
 	const token = req.headers['x-access-token'];
 	try {
-		console.log(req.file);
-		compressImage(req.file.path);
-		console.log(req.file);
+		console.log(req.file.filename);
 		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
+		const [old_file]: any = await pool.query(
+			'SELECT avatar FROM usuario WHERE id = ?',
+			[decoded.id],
+		);
+
+		if (
+			old_file[0].avatar !== 'https://networking.miami/media/user-image.png'
+		) {
+			try {
+				fs.unlinkSync(
+					path.join(
+						__dirname,
+						`${configEnv.FILES_PATH}/${old_file[0].fotoPortada.split('/')[5]}`,
+					),
+				);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+
 		const [result]: any = await pool.query(
 			'UPDATE usuario SET avatar = ? WHERE id = ?',
 			[`${configEnv.URL_BACK}api/file/${req.file.filename}`, decoded.id],
@@ -70,10 +87,6 @@ export const deleteFilePortada = async (req, res) => {
 	const token = req.headers['x-access-token'];
 	try {
 		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
-		const [result]: any = await pool.query(
-			'UPDATE usuario SET fotoPortada = ? WHERE id = ?',
-			['https://networking.miami/media/banner/backgroundUser.png', decoded.id],
-		);
 		const [old_file]: any = await pool.query(
 			'SELECT fotoPortada FROM usuario WHERE id = ?',
 			[decoded.id],
@@ -93,6 +106,10 @@ export const deleteFilePortada = async (req, res) => {
 				console.log(error);
 			}
 		}
+		const [result]: any = await pool.query(
+			'UPDATE usuario SET fotoPortada = ? WHERE id = ?',
+			['https://networking.miami/media/banner/backgroundUser.png', decoded.id],
+		);
 
 		res.json({
 			path: 'https://networking.miami/media/banner/backgroundUser.png',
@@ -107,10 +124,6 @@ export const deleteFileAvatar = async (req, res) => {
 	const token = req.headers['x-access-token'];
 	try {
 		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
-		const [result]: any = await pool.query(
-			'UPDATE usuario SET avatar = ? WHERE id = ?',
-			['https://networking.miami/media/user-image.png', decoded.id],
-		);
 		const [old_file]: any = await pool.query(
 			'SELECT avatar FROM usuario WHERE id = ?',
 			[decoded.id],
@@ -119,16 +132,19 @@ export const deleteFileAvatar = async (req, res) => {
 			old_file[0].avatar !== 'https://networking.miami/media/user-image.png'
 		) {
 			try {
-				fs.unlinkSync(
-					path.join(
-						__dirname,
-						`${configEnv.FILES_PATH}/${old_file[0].avatar.split('/')[5]}`,
-					),
+				const joinPath = path.join(
+					__dirname,
+					`${configEnv.FILES_PATH}/${old_file[0].avatar.split('/')[5]}`,
 				);
+				fs.unlinkSync(joinPath);
 			} catch (error) {
 				console.log(error);
 			}
 		}
+		const [result]: any = await pool.query(
+			'UPDATE usuario SET avatar = ? WHERE id = ?',
+			['https://networking.miami/media/user-image.png', decoded.id],
+		);
 
 		res.json({
 			path: 'https://networking.miami/media/user-image.png',

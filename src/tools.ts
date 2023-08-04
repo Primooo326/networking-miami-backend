@@ -3,8 +3,6 @@ import jwt from 'jsonwebtoken';
 import configEnv from './config';
 import nodemailer from 'nodemailer';
 import fs from 'fs';
-const imagemin = require('imagemin');
-const imageminMozjpeg = require('imagemin-mozjpeg');
 
 export async function encrypt(data: string) {
 	const salt = await bcrypt.genSalt(11);
@@ -105,16 +103,4 @@ export async function sendEmail(
 	} catch (error) {
 		console.log('error::', error);
 	}
-}
-
-export async function compressImage(filepath: string) {
-	const files = await imagemin([filepath], {
-		destination: 'images',
-		plugins: [
-			imageminMozjpeg({
-				quality: 50,
-			}),
-		],
-	});
-	return files[0].destinationPath;
 }
