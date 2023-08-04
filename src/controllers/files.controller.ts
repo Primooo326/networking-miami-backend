@@ -6,13 +6,13 @@ import jwt from 'jsonwebtoken';
 export const uploadFileAvatar = async (req, res) => {
 	const token = req.headers['x-access-token'];
 	try {
-		console.log(req.file.filename);
 		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
 		const [old_file]: any = await pool.query(
 			'SELECT avatar FROM usuario WHERE id = ?',
 			[decoded.id],
 		);
 
+		console.log('oldFile', old_file[0].avatar);
 		if (
 			old_file[0].avatar !== 'https://networking.miami/media/user-image.png'
 		) {
@@ -20,7 +20,7 @@ export const uploadFileAvatar = async (req, res) => {
 				fs.unlinkSync(
 					path.join(
 						__dirname,
-						`${configEnv.FILES_PATH}/${old_file[0].fotoPortada.split('/')[5]}`,
+						`${configEnv.FILES_PATH}/${old_file[0].avatar.split('/')[5]}`,
 					),
 				);
 			} catch (error) {
@@ -83,6 +83,40 @@ export const uploadFilePortada = async (req, res) => {
 		res.status(500).send(error);
 	}
 };
+export const deleteFileAvatar = async (req, res) => {
+	const token = req.headers['x-access-token'];
+	try {
+		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
+		const [old_file]: any = await pool.query(
+			'SELECT avatar FROM usuario WHERE id = ?',
+			[decoded.id],
+		);
+		if (
+			old_file[0].avatar !== 'https://networking.miami/media/user-image.png'
+		) {
+			try {
+				const joinPath = path.join(
+					__dirname,
+					`${configEnv.FILES_PATH}/${old_file[0].avatar.split('/')[5]}`,
+				);
+				fs.unlinkSync(joinPath);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+		const [result]: any = await pool.query(
+			'UPDATE usuario SET avatar = ? WHERE id = ?',
+			['https://networking.miami/media/user-image.png', decoded.id],
+		);
+
+		res.json({
+			path: 'https://networking.miami/media/user-image.png',
+			request: req.file,
+		});
+	} catch (error) {
+		res.status(500).send(error);
+	}
+};
 export const deleteFilePortada = async (req, res) => {
 	const token = req.headers['x-access-token'];
 	try {
@@ -119,42 +153,6 @@ export const deleteFilePortada = async (req, res) => {
 		res.status(500).send(error);
 	}
 };
-
-export const deleteFileAvatar = async (req, res) => {
-	const token = req.headers['x-access-token'];
-	try {
-		const decoded: any = jwt.verify(token, configEnv.SECRET_KEY);
-		const [old_file]: any = await pool.query(
-			'SELECT avatar FROM usuario WHERE id = ?',
-			[decoded.id],
-		);
-		if (
-			old_file[0].avatar !== 'https://networking.miami/media/user-image.png'
-		) {
-			try {
-				const joinPath = path.join(
-					__dirname,
-					`${configEnv.FILES_PATH}/${old_file[0].avatar.split('/')[5]}`,
-				);
-				fs.unlinkSync(joinPath);
-			} catch (error) {
-				console.log(error);
-			}
-		}
-		const [result]: any = await pool.query(
-			'UPDATE usuario SET avatar = ? WHERE id = ?',
-			['https://networking.miami/media/user-image.png', decoded.id],
-		);
-
-		res.json({
-			path: 'https://networking.miami/media/user-image.png',
-			request: req.file,
-		});
-	} catch (error) {
-		res.status(500).send(error);
-	}
-};
-
 export const getFile = async (req, res) => {
 	try {
 		fs.readFile(

@@ -44,7 +44,6 @@ export const sendMailVerification = async (req, res) => {
 		res.status(500).json(error);
 	}
 };
-
 export const sendMailInvitation = async (req, res) => {
 	try {
 		const { contactos, user } = req.body;
@@ -57,7 +56,6 @@ export const sendMailInvitation = async (req, res) => {
 		res.status(500).json(error);
 	}
 };
-
 export const sendMailResetPassword = async (req, res) => {
 	try {
 		const { email } = req.body;
@@ -78,7 +76,6 @@ export const sendMailResetPassword = async (req, res) => {
 		res.status(500).send(error);
 	}
 };
-
 export const sendMailChangeMail = async (req, res) => {
 	try {
 		const { email, newEmail } = req.body;
@@ -120,7 +117,6 @@ export const sendMailNewContact = async (req, res) => {
 		res.status(500).send(error);
 	}
 };
-
 export const verifyTokenNewContact = async (req, res) => {
 	try {
 		const token = req.params.token;
