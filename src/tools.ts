@@ -86,12 +86,12 @@ export async function sendEmail(
 			secure: true,
 			auth: {
 				user: 'noreply@networking.miami',
-				pass: 'Miami2023$',
+				pass: 'R8d!{]}oFyzn',
 			},
 		});
 
 		const info = await transporter.sendMail({
-			from: '"Networking miami" <noreply@networking.miami>',
+			from: '"Networking Miami" <noreply@networking.miami>',
 			to: userEmail,
 			subject: mailBuildData.subject,
 			html: mailBuildData.htmlContent,
