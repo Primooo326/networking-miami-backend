@@ -56,7 +56,8 @@ export async function sendEmail(
 			mailBuildData.subject = 'Invitación';
 			mailBuildData.htmlContent = fs
 				.readFileSync(`${configEnv.MAIL_PATH}/mailinvitation.html`, 'utf8')
-				.replace('{{USER}}', data)
+				.replace('{{USER}}', data.user)
+				.replace('{{NOMBRE}}', data.nombre)
 				.replace('{{URL}}', configEnv.URL_FRONT);
 		} else if (typeEmail === 'passwordReset') {
 			mailBuildData.subject = 'Recuperación de contraseña';

@@ -49,7 +49,10 @@ export const sendMailInvitation = async (req, res) => {
 		const { contactos, user } = req.body;
 		console.log(req.body);
 		contactos.forEach(async (contacto) => {
-			await sendEmail(contacto.email, 'invitation', user);
+			await sendEmail(contacto.email, 'invitation', {
+				nombre: contacto.nombre,
+				user,
+			});
 		});
 		res.json({ contactos, user });
 	} catch (error) {
