@@ -57,7 +57,7 @@ export async function sendEmail(
 			mailBuildData.htmlContent = fs
 				.readFileSync(`${configEnv.MAIL_PATH}/mailinvitation.html`, 'utf8')
 				.replace('{{USER}}', data.user)
-				.replace('{{NOMBRE}}', data.nombre)
+				.replace('{{NOMBRE}}', data.nombre.split(' ')[0])
 				.replace('{{URL}}', configEnv.URL_FRONT);
 		} else if (typeEmail === 'passwordReset') {
 			mailBuildData.subject = 'Recuperación de contraseña';
@@ -69,7 +69,7 @@ export async function sendEmail(
 			mailBuildData.subject = '¡Tienes una nueva solicitud!';
 			mailBuildData.htmlContent = fs
 				.readFileSync(`${configEnv.MAIL_PATH}/newContact.html`, 'utf8')
-				.replace('{{NOMBRE}}', data.solicitante.nombre.split(' ')[0])
+				.replace('{{NOMBRE}}', data.solicitante.nombre)
 				.replace('{{BIOGRAFIA}}', data.solicitante.biografia)
 				.replace('{{NOTA}}', '¡Hola! quisiera conectar contigo')
 				.replace('{{AVATAR}}', data.solicitante.avatar)
