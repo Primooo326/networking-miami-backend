@@ -171,19 +171,26 @@ export const register = async (req, res) => {
 		res.status(500).send('registered failed');
 	}
 };
-export const resetPassword = async (req, res) => {
+export const changePasswod = async (req, res) => {
 	try {
-		const { token, password } = req.body;
-		const { email }: any = jwt.verify(token, configEnv.SECRET_KEY);
-		console.log(email, password);
-
-		const passwordEncrypted = await encrypt(password);
-
-		await pool.query('UPDATE usuario SET password = ? WHERE email = ?', [
-			passwordEncrypted,
-			email,
+		const { id, passwordNueva, passwordActual } = req.body;
+		const [rows]: any = await pool.query('SELECT * FROM usuario WHERE id = ?', [
+			id,
 		]);
-		res.redirect(configEnv.URL_FRONT);
+		const user = rows[0];
+		const esSimilar = await compare(passwordActual, user.password);
+
+		if (esSimilar) {
+			const passwordEncrypted = await encrypt(passwordNueva);
+
+			await pool.query('UPDATE usuario SET password = ? WHERE id = ?', [
+				passwordEncrypted,
+				id,
+			]);
+			res.json({ messaje: 'Contraseña actualizada' });
+		} else {
+			res.status(500).json({ messaje: 'Contraseña incorrecta' });
+		}
 	} catch (error) {
 		res
 			.status(500)

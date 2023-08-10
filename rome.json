@@ -5,20 +5,19 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"all": true,
+			"all": false,
 			"suspicious": {
-				"noExplicitAny": "off",
+				"noExplicitAny": "warn",
 				"noAssignInExpressions": "off",
 				"noDoubleEquals": "off"
-			},
-			"nursery": {
-				"noConsoleLog": "off"
 			}
+			
 		}
 	},
 	"formatter": {
 		"enabled": true,
 		"formatWithErrors": true
+		
 	},
 	"javascript": {
 		"formatter": {

@@ -69,7 +69,7 @@ export async function sendEmail(
 			mailBuildData.subject = '¡Tienes una nueva solicitud!';
 			mailBuildData.htmlContent = fs
 				.readFileSync(`${configEnv.MAIL_PATH}/newContact.html`, 'utf8')
-				.replace('{{NOMBRE}}', data.solicitante.nombre)
+				.replace('{{NOMBRE}}', data.solicitante.nombre.split(' ')[0])
 				.replace('{{BIOGRAFIA}}', data.solicitante.biografia)
 				.replace('{{NOTA}}', '¡Hola! quisiera conectar contigo')
 				.replace('{{AVATAR}}', data.solicitante.avatar)

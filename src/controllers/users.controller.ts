@@ -65,70 +65,48 @@ export const readSimilarUsers = async (req, res) => {
   try {
     const user = req.body;
 
-    // Validate input data (you may customize these checks based on your data requirements)
-    if (
-      !user.id ||
-      !user.temasInteres ||
-      !user.areaExperiencia ||
-      !user.lenguajes ||
-      !user.tipoConexion
-    ) {
+    // Validate input data
+    if (!user.id || !user.temasInteres || !user.areaExperiencia || !user.tipoConexion) {
       return res.status(400).json({ error: "Invalid input data" });
     }
 
-    const [results]: any = await pool.query(
+    const [contactResults]:any = await pool.query(
       "SELECT DISTINCT contacto_id FROM usuario_contacto WHERE usuario_id = ?",
       [user.id]
     );
-    let ids1 = results.map((data) => data.contacto_id);
-    if (results.length == 0) ids1 = [];
-    ids1.push(user.id);
-
-    console.log(ids1);
+    const contactIds = contactResults.map((data) => data.contacto_id);
+    contactIds.push(user.id);
 
     const similarUsersQuery = `
       SELECT DISTINCT u.id, u.nombre, u.email, u.biografia, u.avatar, u.verificado
       FROM usuario AS u
       LEFT JOIN usuario_intereses AS uti ON u.id = uti.usuario_id
       LEFT JOIN usuario_experiencia AS uae ON u.id = uae.usuario_id
-      LEFT JOIN usuario_lenguajes AS ul ON u.id = ul.usuario_id
       LEFT JOIN usuario_conexion AS utc ON u.id = utc.usuario_id
       WHERE u.id NOT IN (?) 
-      AND (uti.interes IN (?) OR uae.experiencia IN (?) OR ul.lenguaje IN (?) OR utc.conexion IN (?))
+      AND (uti.interes IN (?) OR uae.experiencia IN (?) OR utc.conexion IN (?))
     `;
 
-    const values = [
-      ids1,
-      user.temasInteres,
-      user.areaExperiencia,
-      user.lenguajes,
-      user.tipoConexion,
-    ];
-
-    const [similarUsers]: any = await pool.query(similarUsersQuery, values);
-
-    const ids = similarUsers.map((userPending) => userPending.id);
+    const similarUsersValues = [contactIds, user.temasInteres, user.areaExperiencia, user.tipoConexion];
+    const [similarUsers]:any = await pool.query(similarUsersQuery, similarUsersValues);
 
     const pendingRequestsQuery = `
-      SELECT u.* FROM usuario_solicitudes us 
-      JOIN usuario u ON us.solicitante_id = u.id 
-      WHERE us.receptor_id = ? AND us.estado = 'pendiente' AND us.solicitante_id NOT IN (?)
+      SELECT * FROM usuario_solicitudes WHERE solicitante_id = ? AND estado = 'Pendiente' AND solicitante_id NOT IN (?)
     `;
 
-    const [pendingResults]: any = await pool.query(pendingRequestsQuery, [
-      user.id,
-      ids,
-    ]);
-    const [rows]: any = await pool.query(
-      "SELECT * FROM usuario WHERE id NOT IN (?) LIMIT ? OFFSET ?",
-      [ids, Number(50), 0 * 50]
-    );
+    const pendingRequestsValues = [user.id, contactIds];
+    const [pendingResults]:any = await pool.query(pendingRequestsQuery, pendingRequestsValues);
+
     let combinedResults;
-    if (similarUsers.length == 0) {
-      console.log("with similars");
-      combinedResults = [...pendingResults, ...rows];
+    if (similarUsers.length === 0) {
+      console.log("with random users");
+      const [randomRows]:any = await pool.query(
+        "SELECT * FROM usuario WHERE id NOT IN (?) LIMIT ? OFFSET ?",
+        [contactIds, Number(50), 0 * 50]
+      );
+      combinedResults = [...pendingResults, ...randomRows];
     } else {
-      console.log("without similars");
+      console.log("with similar users");
       combinedResults = [...pendingResults, ...similarUsers];
     }
 
@@ -138,6 +116,7 @@ export const readSimilarUsers = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 export const readAllUsers = async (req, res) => {
   try {
@@ -370,8 +349,6 @@ export const updateUserById = async (req, res) => {
     genero,
     telefono,
     biografia,
-    avatar,
-    fotoPortada,
     objetivo,
     fechaIngreso,
     temasInteres,
@@ -393,19 +370,16 @@ export const updateUserById = async (req, res) => {
       // const passwordEncrypted = await encrypt(password);
 
       const [result]: any = await pool.query(
-        "UPDATE usuario SET nombre = ?,email = ?,fechaNacimiento = ?,condado = ?,ciudad = ?,genero = ?,telefono = ?,biografia = ?,avatar = ?,fotoPortada = ?,objetivo = ?,fechaIngreso = ? WHERE id = ?",
+        "UPDATE usuario SET nombre = ?,email = ?,fechaNacimiento = ?,condado = ?,ciudad = ?,genero = ?,telefono = ?,biografia = ?,objetivo = ?,fechaIngreso = ? WHERE id = ?",
         [
           nombre,
           email,
-          // passwordEncrypted,
           fechaNacimiento,
           condado,
           ciudad,
           genero,
           telefono,
           biografia,
-          avatar,
-          "https://img.freepik.com/free-photo/glitch-effect-black-background_53876-129025.jpg?w=740&t=st=1686934648~exp=1686935248~hmac=1ce13f8749d5e2fddc16cfa874fa7ac7b6ac58c88576f7e70527eb6bf08249c3",
           objetivo,
           fechaIngreso,
           id,
@@ -454,6 +428,66 @@ export const updateUserById = async (req, res) => {
     }
   } catch (error) {
     console.error("Error during registered:", error);
-    res.status(500).send("registered failed");
+    res.status(500).json("registered failed");
   }
 };
+
+export const eliminarUsuario = async (req, res) => {
+  try {
+  console.log("params::::",req.body);
+	const { id } = req.body;
+	if (!id) {
+		res.status(500).send('No id');
+	}
+    //delete usuarios_conectados
+    await pool.query('DELETE FROM usuarios_conectados WHERE usuario_id = ?', [
+      id
+    ]);
+
+		//delete usuario_solicitudes
+		await pool.query('DELETE FROM usuario_solicitudes WHERE solicitante_id = ? OR receptor_id = ?', [
+			id,id
+		]);
+		//delete usuario_notificaciones
+		await pool.query('DELETE FROM usuario_notificaciones WHERE usuario_id = ?', [
+			id
+		]);
+		//delete usuario_mensajes
+		await pool.query('DELETE FROM usuario_mensajes WHERE remitente_id = ? OR destinatario_id = ?', [
+			id, id
+		]);
+		//delete usuario_lenguajes
+		await pool.query('DELETE FROM usuario_lenguajes WHERE usuario_id = ?', [
+			id
+		]);
+		//delete usuario_intereses
+		await pool.query('DELETE FROM usuario_intereses WHERE usuario_id = ?', [
+			id
+		]);
+		//delete usuario_experiencia
+		await pool.query('DELETE FROM usuario_experiencia WHERE usuario_id = ?', [
+			id
+		]);
+		// delete usuario_conversaciones
+		await pool.query('DELETE FROM usuario_conversaciones WHERE usuario_id_1 = ? OR usuario_id_2 = ?', [
+			id,id
+		]);
+		//delete usuario_contacto
+		await pool.query('DELETE FROM usuario_contacto WHERE usuario_id = ? OR contacto_id = ?', [
+			id,id
+		]);
+		//delete usuario_conexion
+		await pool.query('DELETE FROM usuario_conexion WHERE usuario_id = ?', [
+			id
+		]);
+		//delete usuario
+		await pool.query('DELETE FROM usuario WHERE id = ?', [
+			id
+		]);
+		res.status(200).json({messaje:'Cuenta eliminada'});
+
+	} catch (error) {
+		res.status(500).send(error);
+	}
+
+}
