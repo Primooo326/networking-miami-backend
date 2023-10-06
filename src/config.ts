@@ -10,8 +10,8 @@ const development = {
 	DB_DATABASE: 'networking',
 	DB_PORT: '3306',
 	SECRET_KEY: 'pojasjidaoihs#447%78as_66',
-	URL_FRONT: 'http://localhost:4200/',
-	URL_BACK: 'http://localhost:4000/',
+	URL_FRONT: 'http://192.168.1.123:4200/',
+	URL_BACK: 'http://192.168.1.123:4000/',
 	FILES_PATH: '../../images',
 	MAIL_PATH: 'views',
 };
