@@ -9,8 +9,10 @@ router.get('/all', userControllers.readAllUsers);
 router.get('/', verifyToken, userControllers.readUsers);
 router.post('/searchByParameters',verifyToken, userControllers.searchUserByParameters3);
 router.post('/readSimilarUsers',verifyToken, userControllers.readSimilarUsers);
+// router.post('/readSimilarUsers', userControllers.readSimilarUsers);
 router.post('/eliminarUsuario',verifyToken, userControllers.eliminarUsuario);
 router.put('/', verifyToken, userControllers.updateUserById);
+router.get("/getConexiones", userControllers.getConexiones);
 
 
 export default router;

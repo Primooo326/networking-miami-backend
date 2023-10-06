@@ -491,3 +491,14 @@ export const eliminarUsuario = async (req, res) => {
 	}
 
 }
+
+export const getConexiones = async (req, res) => { 
+    try {
+      const queyr = "SELECT id, conexion FROM conexiones ";
+      const [results]: any = await pool.query(queyr);
+      res.json(results);
+    } catch (error) {
+      console.log(error);
+      res.json("Error al obtener conexiones");
+    }
+}
