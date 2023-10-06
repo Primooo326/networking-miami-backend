@@ -7,7 +7,7 @@ const development = {
 	DB_HOST: 'localhost',
 	DB_USER: 'root',
 	DB_PASSWORD: '',
-	DB_DATABASE: 'networking4',
+	DB_DATABASE: 'networking',
 	DB_PORT: '3306',
 	SECRET_KEY: 'pojasjidaoihs#447%78as_66',
 	URL_FRONT: 'http://localhost:4200/',
