@@ -69,7 +69,6 @@ export const login = async (req, res) => {
 		res.status(500).send('Login failed');
 	}
 };
-
 export const register = async (req, res) => {
 	let {
 		nombre,
@@ -171,7 +170,7 @@ export const register = async (req, res) => {
 		res.status(500).send('registered failed');
 	}
 };
-export const changePasswod = async (req, res) => {
+export const changePassword = async (req, res) => {
 	try {
 		const { id, passwordNueva, passwordActual } = req.body;
 		const [rows]: any = await pool.query('SELECT * FROM usuario WHERE id = ?', [
@@ -197,13 +196,72 @@ export const changePasswod = async (req, res) => {
 			.send(fs.readFileSync('views/tokenInvalid.html.html', 'utf8'));
 	}
 };
-// refres token
-export const refreshToken = async (req, res) => {
+export const loginAdmin = async (req, res) => {
 	try {
-		const { id } = req.body;
-		const token = generateTokenSign({ id: id }, 86400);
-		res.status(200).json({ token });
+		
+		const { email, password } = req.body;
+
+		const [rows]: any = await pool.query(
+			'SELECT * FROM super_usuario WHERE email = ?',
+			[email],
+		);
+
+		if (rows.length > 0) {
+
+			const user = rows[0];
+
+			const esSimilar = await compare(password, user.password);
+
+			if (esSimilar) {
+				const token = generateTokenSign({ id: user.id }, '7d');
+				res.status(200).json({ token, id: user.id  });
+			} else {
+				res.status(500).send('Contraseña incorrecta');
+			}
+		} else {
+			res.status(500).send('Usuario no existe');
+		}
+
 	} catch (error) {
-		res.status(500).send(error);
+		res.status(500).send('Login failed');
+		
 	}
-};
+}
+export const registerAdmin = async (req, res) => {
+
+	try {
+		const { email, password } = req.body;
+
+		const [rows]: any = await pool.query(
+			'SELECT * FROM super_usuario WHERE email = ?',
+			[email],
+		);
+
+		if (rows.length > 0) {
+			res.status(500).send('User already registered');
+		} else {
+			const passwordEncrypted = await encrypt(`${password}`);
+
+			const [rows]: any = await pool.query(
+				'INSERT INTO super_usuario (email,password) VALUES (?,?)',
+				[
+					email,
+					passwordEncrypted
+				],
+			);
+
+			const token = generateTokenSign({ id: rows.insertId }, '7d');
+
+
+			res.status(200).json({
+				token,
+				id: rows.insertId,
+			});
+		}
+
+
+	} catch (error) {
+		res.status(500).send('registered failed');		
+	}
+
+}
