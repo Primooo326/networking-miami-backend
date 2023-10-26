@@ -27,6 +27,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local_path: ./*
           remote_path: public_html/api.networking.miami
+
       # Conexión SSH para ejecutar npm install en el servidor remoto
       - name: SSH into remote server
         uses: appleboy/ssh-action@v1.0.0
@@ -38,3 +39,8 @@ jobs:
           script: |
             cd public_html/api.networking.miami
             /opt/cpanel/ea-nodejs**/bin/npm install
+      
+      # Create the restart.txt file
+      - name: Create restart.txt
+        run: |
+          touch public_html/api.networking.miami/tmp/restart.txt
