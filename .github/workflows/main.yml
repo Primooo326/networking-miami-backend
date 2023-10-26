@@ -39,7 +39,7 @@ jobs:
           script: |
             cd public_html/api.networking.miami
             /opt/cpanel/ea-nodejs**/bin/npm install
-            /opt/cpanel/ea-nodejs**/bin/npm run build
+            /opt/cpanel/ea-nodejs**/bin/npx tsc
             touch /home/networking/public_html/api.networking.miami/dist/tmp/restart.txt
 
           
