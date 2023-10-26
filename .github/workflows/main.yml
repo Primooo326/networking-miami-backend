@@ -1,44 +1,17 @@
-name: Publish Website to Cpanel
-on:
-  push:
-    branches:
-      - deploy
-
-jobs:
-  deploy_job:
-    runs-on: ubuntu-latest
-    name: deploy
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16 # Puedes ajustar la versión de Node.js según tus necesidades
-
-      # Paso para desplegar el archivo
-      - name: Deploy files
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local_path: ./*
-          remote_path: public_html/api.networking.miami
-
-      # Conexión SSH para ejecutar npm install en el servidor remoto 
-      - name: SSH into remote server
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 22
-          script: |
-            cd public_html/api.networking.miami
-            /opt/cpanel/ea-nodejs**/bin/npm install && /opt/cpanel/ea-nodejs**/bin/npm run build
-            touch /home/networking/public_html/api.networking.miami/dist/tmp/restart.txt
-
-          
+- name: SSH into remote server
+  uses: appleboy/ssh-action@v1.0.0
+  with:
+    host: ${{ secrets.FTP_SERVER }}
+    username: ${{ secrets.FTP_USERNAME }}
+    password: ${{ secrets.FTP_PASSWORD }}
+    port: 22
+    script: |
+      cd public_html/api.networking.miami
+      # Ejecutar npm install
+      /opt/cpanel/ea-nodejs**/bin/npm install
+      # Ejecutar tsc desde la ruta local de la aplicación
+      ./node_modules/typescript/bin/tsc
+      # Ejecutar npm run build
+      /opt/cpanel/ea-nodejs**/bin/npm run build
+      # Reiniciar la aplicación
+      touch /home/networking/public_html/api.networking.miami/dist/tmp/restart.txt
