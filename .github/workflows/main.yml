@@ -42,6 +42,6 @@ jobs:
       # Paso para descomprimir el archivo en el servidor
       - name: Unzip on remote server
         run: |
-          sshpass -p ${{ secrets.FTP_PASSWORD }} ssh ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} "unzip -o public_html/api.networking.miami/deploy.zip -d public_html/api.networking.miami/"
+          unzip -o public_html/api.networking.miami/deploy.zip -d public_html/api.networking.miami/
 
 
