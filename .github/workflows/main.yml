@@ -39,7 +39,6 @@ jobs:
           script: |
             cd public_html/api.networking.miami
             /opt/cpanel/ea-nodejs**/bin/npm install &&
-            touch /home/networking/public_html/api.networking.miami/dist
-            passenger-config restart-app /home/networking/public_html/api.networking.miami/dist
+            touch /home/networking/public_html/api.networking.miami/tmp/restart.txt
 
           
