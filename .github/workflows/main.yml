@@ -28,7 +28,7 @@ jobs:
           local_path: ./*
           remote_path: public_html/api.networking.miami
 
-      # Conexión SSH para ejecutar npm install en el servidor remoto
+      # Conexión SSH para ejecutar npm install en el servidor remoto 
       - name: SSH into remote server
         uses: appleboy/ssh-action@v1.0.0
         with:
