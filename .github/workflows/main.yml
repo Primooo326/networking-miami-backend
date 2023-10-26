@@ -18,12 +18,6 @@ jobs:
         with:
           node-version: 16 # Puedes ajustar la versión de Node.js según tus necesidades
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
-
       # Paso para desplegar el archivo
       - name: Deploy files
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
