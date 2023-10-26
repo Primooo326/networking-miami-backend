@@ -27,12 +27,14 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local_path: ./*
           remote_path: public_html/api.networking.miami
-          
+
       - name: Install dependencies
         run: npm install
 
       - name: Build
         run: npm run build
 
+      - name: Install dependencies
+        run: npm install
 
 
