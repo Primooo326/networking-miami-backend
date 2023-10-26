@@ -33,10 +33,14 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local_path: ./*
           remote_path: public_html/api.networking.miami
-          sftpArgs: npm install
-
-
-      
-
-
-
+      # Conexión SSH para ejecutar npm install en el servidor remoto
+      - name: SSH into remote server
+        uses: appleboy/ssh-action@v0.4.4
+        with:
+          host: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          script: |
+            cd public_html/api.networking.miami
+            npm install
+            
