@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.send("Welcome to networking backend 3");
+  res.send("Welcome to networking backend 4");
 });
 app.get("/ping", async (req, res) => {
   const routes: any[] = [];

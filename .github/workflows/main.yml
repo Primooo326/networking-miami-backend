@@ -40,7 +40,6 @@ jobs:
                 cd public_html/api.networking.miami
                 /opt/cpanel/ea-nodejs**/bin/npm install
                 /opt/cpanel/ea-nodejs**/bin/node ./node_modules/typescript/bin/tsc
-                /opt/cpanel/ea-nodejs**/bin/npm run build
                 touch /home/networking/public_html/api.networking.miami/dist/tmp/restart.txt
 
           
