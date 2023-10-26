@@ -18,17 +18,6 @@ jobs:
         with:
           node-version: 16 # Puedes ajustar la versión de Node.js según tus necesidades
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
-
-      # Paso para comprimir los archivos y carpetas
-      - name: Compress files
-        run: |
-          zip -r deploy.zip dist/ views/ .htaccess package.json
-
       # Paso para desplegar el archivo
       - name: Deploy compressed files
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
@@ -36,12 +25,14 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local_path: deploy.zip
+          local_path: ./*
           remote_path: public_html/api.networking.miami
+          
+      - name: Install dependencies
+        run: npm install
 
-      # Paso para descomprimir el archivo en el servidor
-      - name: Unzip on remote server
-        run: |
-          unzip -o public_html/api.networking.miami/deploy.zip -d public_html/api.networking.miami/
+      - name: Build
+        run: npm run build
+
 
 
