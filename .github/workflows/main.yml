@@ -7,11 +7,7 @@
     port: 22
     script: |
       cd public_html/api.networking.miami
-      # Ejecutar npm install
       /opt/cpanel/ea-nodejs**/bin/npm install
-      # Ejecutar tsc desde la ruta local de la aplicación
       ./node_modules/typescript/bin/tsc
-      # Ejecutar npm run build
       /opt/cpanel/ea-nodejs**/bin/npm run build
-      # Reiniciar la aplicación
       touch /home/networking/public_html/api.networking.miami/dist/tmp/restart.txt
