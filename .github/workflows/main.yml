@@ -38,9 +38,7 @@ jobs:
           port: 22
           script: |
             cd public_html/api.networking.miami
-            /opt/cpanel/ea-nodejs**/bin/npm install
-      
-      # Create the restart.txt file
-      - name: Create restart.txt
-        run: |
-          touch public_html/api.networking.miami/tmp/restart.txt
+            /opt/cpanel/ea-nodejs**/bin/npm install &&
+            touch public_html/api.networking.miami/tmp/restart.txt
+
+          
