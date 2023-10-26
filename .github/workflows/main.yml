@@ -39,6 +39,6 @@ jobs:
           script: |
             cd public_html/api.networking.miami
             /opt/cpanel/ea-nodejs**/bin/npm install &&
-            touch public_html/api.networking.miami/tmp/restart.txt
+            touch /home/networking/public_html/api.networking.miami/tmp/restart.txt
 
           
