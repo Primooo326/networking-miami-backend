@@ -42,9 +42,6 @@ export const readMessages = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    // const fecha_envio = Date.now();
-    //fecha de envio a numero
-
     const { conversacion_id, contenido, remitente_id, destinatario_id } =
       req.body;
     const [result]: any = await pool.query(
@@ -80,14 +77,6 @@ export const readChatByIdUser = async (req, res) => {
       "SELECT * FROM usuario_mensajes  WHERE (remitente_id = ? AND destinatario_id = ?) OR (remitente_id = ? AND destinatario_id = ?) ORDER BY fecha_envio DESC LIMIT ? OFFSET ?",
       [idUser, idUser2, idUser2, idUser, batchsize, currentbatch * batchsize]
     );
-    // const [results] = await pool.query(
-    // 	'SELECT * FROM usuario_mensajes JOIN usuario_conversaciones ON conversacion_id = usuario_conversaciones.id WHERE (usuario_id_1 = ? AND usuario_id_2 = ?) OR (usuario_id_1 = ? AND usuario_id_2 = ?) ORDER BY fecha_envio ASC',
-    // 	[idUser, idUser2, idUser2, idUser],
-    // );
-    // const [results] = await pool.query(
-    // 	'SELECT * FROM usuario_mensajes WHERE conversacion_id = ? ORDER BY fecha_envio DESC LIMIT ? OFFSET ?',
-    // 	[idUser, batchsize, currentbatch * batchsize],
-    // );
     const [conversacion_id] = await pool.query(
       "SELECT `id` FROM usuario_conversaciones WHERE (usuario_id_1 = ? AND usuario_id_2 = ?) OR (usuario_id_1 = ? AND usuario_id_2 = ?)",
       [idUser, idUser2, idUser2, idUser]
@@ -100,6 +89,7 @@ export const readChatByIdUser = async (req, res) => {
     res.status(500).json({ message: "Error al obtener los chats" });
   }
 };
+
 export const updateMessage = async (req, res) => {
   try {
     const { id } = req.body;
@@ -110,6 +100,28 @@ export const updateMessage = async (req, res) => {
     );
 
     res.json({ message: "Mensaje actualizado" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error al obtener los chats" });
+  }
+};
+
+export const getLastMessageById = async (req, res) => {
+  try {
+    const { remitente_id, destinatario_id } = req.params;
+
+    console.log(req.params);
+
+    if (!remitente_id || !destinatario_id) {
+      res.status(400).json({ message: "Faltan parametros" });
+    }
+
+    const [results] = await pool.query(
+      "SELECT * FROM usuario_mensajes WHERE (remitente_id = ? AND destinatario_id = ?) OR (remitente_id = ? AND destinatario_id = ?) ORDER BY fecha_envio DESC LIMIT 1",
+      [remitente_id, destinatario_id, destinatario_id, remitente_id]
+    );
+
+    res.json(results);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error al obtener los chats" });
