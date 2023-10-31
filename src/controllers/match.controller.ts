@@ -216,6 +216,8 @@ export const readMatch = async (req, res) => {
 					areaExperiencia: areaExperienciaData.map((row) => row.experiencia),
 					temasInteres: temasInteresData.map((row) => row.interes),
 					tipoConexion: tipoConexionData.map((row) => row.conexion),
+					fijado: results.find((c) => c.contacto_id == user.id).fijado,
+					contactoDb_id: results.find((c) => c.contacto_id == user.id).id,
 				};
 				usuarios.push(userDataWithRelations);
 			}
@@ -223,6 +225,22 @@ export const readMatch = async (req, res) => {
 
 			res.json(usuarios);
 		}
+	} catch (error) {
+		console.error('Error during registered:', error);
+		res.status(500).send('registered failed');
+	}
+};
+
+export const updateMatch = async (req, res) => {
+	const { fijado, contactoDb_id } = req.body;
+	try {
+		const [result]: any = await pool.query(
+			'UPDATE usuario_contacto SET fijado = ? WHERE id = ?',
+			[fijado, contactoDb_id],
+		);
+		res.status(200).json({
+			result,
+		});
 	} catch (error) {
 		console.error('Error during registered:', error);
 		res.status(500).send('registered failed');
