@@ -5,31 +5,30 @@ on:
       - deploy
 
 jobs:
-    deploy_job:
-      runs-on: ubuntu-latest
-      name: deploy
-      steps:
+  deploy_job:
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
 
-        - name: Checkout code
-          uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-        - name: Set up Node.js
-          uses: actions/setup-node@v2
-          with:
-            node-version: 16 # Puedes ajustar la versión de Node.js según tus necesidades
-  
-        - name: Install dependencies
-          run: npm install
-  
-        - name: Build
-          run: npm run build
-          
-        - name: deploy file
-          uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-          with:
-            server: ${{ secrets.FTP_SERVER }}
-            username: ${{ secrets.FTP_USERNAME }}
-            password: ${{ secrets.FTP_PASSWORD }}
-            local_path: ./dist/*
-            remote_path: public_html/api.networking.miami
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
 
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy files
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local_path: ./*
+          remote_path: public_html/api.networking.miami
