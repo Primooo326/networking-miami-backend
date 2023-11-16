@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: localhost
--- Tiempo de generación: 13-10-2023 a las 22:09:08
--- Versión del servidor: 10.4.27-MariaDB
--- Versión de PHP: 8.2.0
+-- Servidor: localhost:3306
+-- Tiempo de generación: 16-11-2023 a las 09:48:21
+-- Versión del servidor: 5.7.41
+-- Versión de PHP: 8.1.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `networking`
+-- Base de datos: `networking_prod`
 --
 
 -- --------------------------------------------------------
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `areas_experiencia` (
   `titulo` varchar(255) DEFAULT NULL,
   `id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `areas_experiencia`
@@ -57,7 +57,7 @@ INSERT INTO `areas_experiencia` (`titulo`, `id`) VALUES
 CREATE TABLE `areas_intereses` (
   `interes` varchar(255) DEFAULT NULL,
   `id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `areas_intereses`
@@ -112,7 +112,7 @@ CREATE TABLE `ciudades` (
   `condado_id` int(11) DEFAULT NULL,
   `ciudad` varchar(255) DEFAULT NULL,
   `id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `ciudades`
@@ -1143,7 +1143,7 @@ INSERT INTO `ciudades` (`condado_id`, `ciudad`, `id`) VALUES
 CREATE TABLE `condados` (
   `id` int(11) NOT NULL,
   `nombre` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `condados`
@@ -1227,7 +1227,7 @@ INSERT INTO `condados` (`id`, `nombre`) VALUES
 CREATE TABLE `conexiones` (
   `conexion` varchar(255) DEFAULT NULL,
   `id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `conexiones`
@@ -1250,7 +1250,7 @@ INSERT INTO `conexiones` (`conexion`, `id`) VALUES
 CREATE TABLE `lenguajes` (
   `lenguaje` varchar(255) DEFAULT NULL,
   `id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `lenguajes`
@@ -1301,17 +1301,17 @@ CREATE TABLE `usuario` (
   `email` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `fechaNacimiento` varchar(255) DEFAULT NULL,
-  `verificado` tinyint(1) DEFAULT 0,
+  `verificado` tinyint(1) DEFAULT '0',
   `condado` varchar(255) DEFAULT NULL,
   `ciudad` varchar(255) DEFAULT NULL,
   `genero` varchar(255) DEFAULT NULL,
   `telefono` varchar(255) DEFAULT NULL,
-  `biografia` varchar(500) DEFAULT NULL,
+  `biografia` text,
   `avatar` varchar(255) DEFAULT NULL,
   `fotoPortada` varchar(255) DEFAULT NULL,
-  `objetivo` text DEFAULT NULL,
+  `objetivo` text,
   `fechaIngreso` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -1323,8 +1323,8 @@ CREATE TABLE `usuarios_conectados` (
   `id` int(11) NOT NULL,
   `socket_id` varchar(255) NOT NULL,
   `usuario_id` int(11) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -1336,7 +1336,7 @@ CREATE TABLE `usuario_conexion` (
   `usuario_id` int(11) DEFAULT NULL,
   `conexion` varchar(255) DEFAULT NULL,
   `id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -1347,8 +1347,9 @@ CREATE TABLE `usuario_conexion` (
 CREATE TABLE `usuario_contacto` (
   `usuario_id` int(11) DEFAULT NULL,
   `contacto_id` int(11) DEFAULT NULL,
-  `id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id` int(11) NOT NULL,
+  `fijado` tinyint(1) DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -1361,7 +1362,7 @@ CREATE TABLE `usuario_conversaciones` (
   `nombre` varchar(50) DEFAULT NULL,
   `usuario_id_1` int(11) DEFAULT NULL,
   `usuario_id_2` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -1372,7 +1373,7 @@ CREATE TABLE `usuario_conversaciones` (
 CREATE TABLE `usuario_experiencia` (
   `usuario_id` int(11) DEFAULT NULL,
   `experiencia` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -1383,7 +1384,7 @@ CREATE TABLE `usuario_experiencia` (
 CREATE TABLE `usuario_intereses` (
   `usuario_id` int(11) DEFAULT NULL,
   `interes` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -1394,7 +1395,7 @@ CREATE TABLE `usuario_intereses` (
 CREATE TABLE `usuario_lenguajes` (
   `usuario_id` int(11) DEFAULT NULL,
   `lenguaje` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -1409,8 +1410,8 @@ CREATE TABLE `usuario_mensajes` (
   `destinatario_id` int(11) DEFAULT NULL,
   `contenido` varchar(255) DEFAULT NULL,
   `estado` enum('no_visto','visto') DEFAULT 'no_visto',
-  `fecha_envio` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `fecha_envio` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -1422,12 +1423,12 @@ CREATE TABLE `usuario_notificaciones` (
   `id` int(11) NOT NULL,
   `usuario_id` int(11) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
-  `message` text DEFAULT NULL,
-  `data` text DEFAULT NULL,
+  `message` text,
+  `data` text,
   `time` varchar(255) DEFAULT NULL,
   `estado` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -1441,7 +1442,7 @@ CREATE TABLE `usuario_solicitudes` (
   `receptor_id` int(11) DEFAULT NULL,
   `fecha_solicitud` varchar(255) DEFAULT NULL,
   `estado` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Índices para tablas volcadas
@@ -1594,7 +1595,7 @@ ALTER TABLE `condados`
 -- AUTO_INCREMENT de la tabla `conexiones`
 --
 ALTER TABLE `conexiones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `lenguajes`
